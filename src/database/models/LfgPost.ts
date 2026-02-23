@@ -8,6 +8,12 @@ export interface ILfgPost extends Document {
     note: string;
     active: boolean;
     participants: string[];
+    voiceChannelId?: string;
+    channelId: string;
+    timeoutPrompted: boolean;
+    isTimeout: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const lfgPostSchema = new Schema<ILfgPost>({
@@ -18,6 +24,10 @@ const lfgPostSchema = new Schema<ILfgPost>({
     note: { type: String },
     active: { type: Boolean, default: true },
     participants: { type: [String], default: [] },
+    voiceChannelId: { type: String },
+    channelId: { type: String, required: true },
+    timeoutPrompted: { type: Boolean, default: false },
+    isTimeout: { type: Boolean, default: false },
 }, { timestamps: true });
 
 export const LfgPost = model<ILfgPost>('LfgPost', lfgPostSchema);

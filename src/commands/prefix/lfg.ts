@@ -9,6 +9,11 @@ export default {
     async execute(message: Message, args: string[]) {
         if (!message.guildId) return;
 
+        if (env.discord.lfgChannelId && message.channelId !== env.discord.lfgChannelId) {
+            await message.reply(`Silakan cari party game di channel <#${env.discord.lfgChannelId}>`);
+            return;
+        }
+
         const note = args.join(' ') || 'Ayo main bareng!';
 
         const row = new ActionRowBuilder<ButtonBuilder>()
@@ -42,7 +47,11 @@ export default {
             const mode = i.customId === 'lfg_competitive' ? 'Competitive' : 'Unrated';
             const participants = [message.author.id];
 
-            const embed = createLfgEmbed(mode, note, participants)
+            // Interaction API carries the most up-to-date member state
+            const member = await i.guild?.members.fetch(i.user.id);
+            const voiceChannelId = member?.voice.channelId || undefined;
+
+            const embed = createLfgEmbed(mode, note, participants, voiceChannelId)
                 .setThumbnail(message.author.displayAvatarURL());
 
             const roleMention = env.discord.valorantRoleId ? `<@&${env.discord.valorantRoleId}>` : '@here';
@@ -62,7 +71,9 @@ export default {
                 mode,
                 note,
                 active: true,
-                participants
+                participants,
+                voiceChannelId,
+                channelId: message.channelId
             });
 
             await promptMessage.delete().catch(() => { });

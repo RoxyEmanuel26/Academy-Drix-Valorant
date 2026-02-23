@@ -10,6 +10,10 @@ export const env = {
         clientId: process.env.DISCORD_CLIENT_ID || '',
         guildId: process.env.DISCORD_GUILD_ID || '',
         valorantRoleId: process.env.DISCORD_VALORANT_ROLE_ID || '',
+        lfgChannelId: process.env.DISCORD_LFG_CHANNEL_ID || '',
+    },
+    bot: {
+        lfgTimeoutMinutes: parseInt(process.env.LFG_TIMEOUT_MINUTES || '60', 10),
     },
     database: {
         mongoUri: process.env.MONGO_URI || '',

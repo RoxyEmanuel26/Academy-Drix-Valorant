@@ -10,6 +10,10 @@ exports.default = {
     async execute(message, args) {
         if (!message.guildId)
             return;
+        if (env_1.env.discord.lfgChannelId && message.channelId !== env_1.env.discord.lfgChannelId) {
+            await message.reply(`Silakan cari party game di channel <#${env_1.env.discord.lfgChannelId}>`);
+            return;
+        }
         const note = args.join(' ') || 'Ayo main bareng!';
         const row = new discord_js_1.ActionRowBuilder()
             .addComponents(new discord_js_1.ButtonBuilder()
@@ -36,7 +40,10 @@ exports.default = {
             }
             const mode = i.customId === 'lfg_competitive' ? 'Competitive' : 'Unrated';
             const participants = [message.author.id];
-            const embed = (0, embed_1.createLfgEmbed)(mode, note, participants)
+            // Interaction API carries the most up-to-date member state
+            const member = await i.guild?.members.fetch(i.user.id);
+            const voiceChannelId = member?.voice.channelId || undefined;
+            const embed = (0, embed_1.createLfgEmbed)(mode, note, participants, voiceChannelId)
                 .setThumbnail(message.author.displayAvatarURL());
             const roleMention = env_1.env.discord.valorantRoleId ? `<@&${env_1.env.discord.valorantRoleId}>` : '@here';
             let replyId = '';
@@ -54,7 +61,9 @@ exports.default = {
                 mode,
                 note,
                 active: true,
-                participants
+                participants,
+                voiceChannelId,
+                channelId: message.channelId
             });
             await promptMessage.delete().catch(() => { });
         });

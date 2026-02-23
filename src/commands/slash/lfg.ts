@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
 import { createLfgEmbed } from '../../utils/embed';
 import { env } from '../../config/env';
@@ -18,11 +18,20 @@ export default {
                 .setRequired(false)),
     async execute(interaction: ChatInputCommandInteraction) {
         if (!interaction.guildId) return;
+
+        if (env.discord.lfgChannelId && interaction.channelId !== env.discord.lfgChannelId) {
+            await interaction.reply({ content: `Silakan cari party game di channel <#${env.discord.lfgChannelId}>`, ephemeral: true });
+            return;
+        }
+
         const mode = interaction.options.getString('mode') || 'Unrated';
         const note = interaction.options.getString('note') || 'Ayo main bareng!';
 
+        const member = interaction.member as GuildMember;
+        const voiceChannelId = member.voice.channelId || undefined;
+
         const participants = [interaction.user.id];
-        const embed = createLfgEmbed(mode, note, participants)
+        const embed = createLfgEmbed(mode, note, participants, voiceChannelId)
             .setThumbnail(interaction.user.displayAvatarURL());
 
         const roleMention = env.discord.valorantRoleId ? `<@&${env.discord.valorantRoleId}>` : '@here';
@@ -36,7 +45,9 @@ export default {
             mode,
             note,
             active: true,
-            participants
+            participants,
+            voiceChannelId,
+            channelId: interaction.channelId
         });
     },
 };

@@ -11,9 +11,18 @@ export default {
 
         // --- LFG Reply-to-Join Logic ---
         if (message.reference && message.reference.messageId) {
-            const lfgPost = await LfgPost.findOne({ messageId: message.reference.messageId, active: true });
+            // Find LFG even if inactive so we can reject late-comers
+            const lfgPost = await LfgPost.findOne({ messageId: message.reference.messageId });
 
             if (lfgPost) {
+                if (!lfgPost.active) {
+                    if (lfgPost.isTimeout) {
+                        await message.reply('LU TELAT bro! LFG ini udah kelamaan dan batal berangkat. 🗿');
+                    } else if (lfgPost.participants.length >= 5) {
+                        await message.reply('Maaf, team ini udah penuh! 😔');
+                    }
+                    return;
+                }
                 const userId = message.author.id;
 
                 if (lfgPost.participants.includes(userId)) {
@@ -37,7 +46,7 @@ export default {
                 try {
                     const originalMessage = await message.channel.messages.fetch(lfgPost.messageId);
                     if (originalMessage) {
-                        const newEmbed = createLfgEmbed(lfgPost.mode, lfgPost.note, lfgPost.participants)
+                        const newEmbed = createLfgEmbed(lfgPost.mode, lfgPost.note, lfgPost.participants, lfgPost.voiceChannelId)
                             .setThumbnail(originalMessage.embeds[0]?.thumbnail?.url || message.author.displayAvatarURL());
                         await originalMessage.edit({ embeds: [newEmbed] });
                     }

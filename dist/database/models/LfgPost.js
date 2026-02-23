@@ -10,5 +10,9 @@ const lfgPostSchema = new mongoose_1.Schema({
     note: { type: String },
     active: { type: Boolean, default: true },
     participants: { type: [String], default: [] },
+    voiceChannelId: { type: String },
+    channelId: { type: String, required: true },
+    timeoutPrompted: { type: Boolean, default: false },
+    isTimeout: { type: Boolean, default: false },
 }, { timestamps: true });
 exports.LfgPost = (0, mongoose_1.model)('LfgPost', lfgPostSchema);

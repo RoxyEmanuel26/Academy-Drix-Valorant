@@ -15,23 +15,32 @@ export const createErrorEmbed = (description: string) => {
         .setColor('#ff0000');
 };
 
-export const createLfgEmbed = (mode: string, note: string, participants: string[]) => {
+export const createLfgEmbed = (mode: string, note: string, participants: string[], voiceChannelId?: string, isTimeout: boolean = false) => {
     let playersList = '';
     for (let i = 0; i < 5; i++) {
         if (participants[i]) {
             playersList += `${i + 1}. <@${participants[i]}>\n`;
         } else {
-            playersList += `${i + 1}. - Open -\n`;
+            playersList += `${i + 1}. ${isTimeout ? '- Timeout -' : '- Open -'}\n`;
         }
     }
 
     const isFull = participants.length >= 5;
-    const embedTitle = `🎮 Looking For Group: ${mode} ${isFull ? '[FULL]' : ''}`;
-    const embedDesc = `**Mode:** ${mode}\n**Catatan:** ${note}\n\n${isFull ? '*Team sudah penuh!*' : '*Join voice channel dan balas pesan ini jika ingin ikut!*'}\n\n**Daftar Pemain:**\n${playersList}`;
+    let embedTitle = `🎮 Looking For Group: ${mode} ${isFull ? '[FULL]' : ''}`;
+    if (isTimeout) {
+        embedTitle = `[TIMEOUT] Looking For Group: ${mode}`;
+    }
+
+    let voiceJoinText = '*balas pesan ini jika ingin ikut!*\n*Join voice channel yukk!!*';
+    if (voiceChannelId) {
+        voiceJoinText = `*balas pesan ini jika ingin ikut!*\n*Join voice channel <#${voiceChannelId}>*`;
+    }
+
+    const embedDesc = `**Mode:** ${mode}\n**Catatan:** ${note}\n\n${isTimeout ? '*LFG ini sudah melebihi batas waktu!*' : (isFull ? '*Team sudah penuh!*' : voiceJoinText)}\n\n**Daftar Pemain:**\n${playersList}`;
 
     let embedColor: `#${string}` = '#ff4655'; // Default Valorant Red
-    if (isFull) {
-        embedColor = '#aaaaaa'; // Gray out if full
+    if (isFull || isTimeout) {
+        embedColor = '#aaaaaa'; // Gray out if full or timeout
     } else if (mode.toLowerCase() === 'unrated') {
         embedColor = '#28a745'; // Green for Unrated
     } else if (mode.toLowerCase() === 'competitive') {

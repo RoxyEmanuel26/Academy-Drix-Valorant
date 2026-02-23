@@ -18,10 +18,16 @@ exports.default = {
     async execute(interaction) {
         if (!interaction.guildId)
             return;
+        if (env_1.env.discord.lfgChannelId && interaction.channelId !== env_1.env.discord.lfgChannelId) {
+            await interaction.reply({ content: `Silakan cari party game di channel <#${env_1.env.discord.lfgChannelId}>`, ephemeral: true });
+            return;
+        }
         const mode = interaction.options.getString('mode') || 'Unrated';
         const note = interaction.options.getString('note') || 'Ayo main bareng!';
+        const member = interaction.member;
+        const voiceChannelId = member.voice.channelId || undefined;
         const participants = [interaction.user.id];
-        const embed = (0, embed_1.createLfgEmbed)(mode, note, participants)
+        const embed = (0, embed_1.createLfgEmbed)(mode, note, participants, voiceChannelId)
             .setThumbnail(interaction.user.displayAvatarURL());
         const roleMention = env_1.env.discord.valorantRoleId ? `<@&${env_1.env.discord.valorantRoleId}>` : '@here';
         const reply = await interaction.reply({ content: roleMention, embeds: [embed], fetchReply: true });
@@ -32,7 +38,9 @@ exports.default = {
             mode,
             note,
             active: true,
-            participants
+            participants,
+            voiceChannelId,
+            channelId: interaction.channelId
         });
     },
 };
