@@ -28,15 +28,15 @@ const createLfgEmbed = (mode, note, participants, voiceChannelId, isTimeout = fa
         }
     }
     const isFull = participants.length >= 5;
-    let embedTitle = `🎮 Looking For Group: ${mode} ${isFull ? '[FULL]' : ''}`;
+    let embedTitle = `🎮 Looking For Party: ${mode} ${isFull ? '[FULL]' : ''}`;
     if (isTimeout) {
-        embedTitle = `[TIMEOUT] Looking For Group: ${mode}`;
+        embedTitle = `[TIMEOUT] Looking For Party: ${mode}`;
     }
     let voiceJoinText = '*balas pesan ini jika ingin ikut!*\n*Join voice channel yukk!!*';
     if (voiceChannelId) {
         voiceJoinText = `*balas pesan ini jika ingin ikut!*\n*Join voice channel <#${voiceChannelId}>*`;
     }
-    const embedDesc = `**Mode:** ${mode}\n**Catatan:** ${note}\n\n${isTimeout ? '*LFG ini sudah melebihi batas waktu!*' : (isFull ? '*Team sudah penuh!*' : voiceJoinText)}\n\n**Daftar Pemain:**\n${playersList}`;
+    const embedDesc = `**Mode:** ${mode}\n**Catatan:** ${note}\n\n${isTimeout ? '*Pencarian Party ini sudah melebihi batas waktu!*' : (isFull ? '*Team sudah penuh!*' : voiceJoinText)}\n\n**Daftar Pemain:**\n${playersList}`;
     let embedColor = '#ff4655'; // Default Valorant Red
     if (isFull || isTimeout) {
         embedColor = '#aaaaaa'; // Gray out if full or timeout

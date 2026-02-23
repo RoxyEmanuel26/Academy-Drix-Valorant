@@ -5,7 +5,8 @@ const LfgPost_1 = require("../../database/models/LfgPost");
 const embed_1 = require("../../utils/embed");
 const env_1 = require("../../config/env");
 exports.default = {
-    name: 'lfg',
+    name: 'lfp',
+    aliases: ['lfg', 'party', 'carimabar', 'mabar', 'valoyuk'],
     description: 'Cari teman main VALORANT!',
     async execute(message, args) {
         if (!message.guildId)
@@ -26,7 +27,7 @@ exports.default = {
             .setStyle(discord_js_1.ButtonStyle.Danger) // Red
         );
         const promptMessage = await message.reply({
-            content: 'Pilih mode game untuk LFG kamu:',
+            content: 'Pilih mode game untuk LFP / Mabar kamu:',
             components: [row]
         });
         const collector = promptMessage.createMessageComponentCollector({
@@ -35,7 +36,7 @@ exports.default = {
         });
         collector.on('collect', async (i) => {
             if (i.user.id !== message.author.id) {
-                await i.reply({ content: 'Ini LFG punya orang lain!', ephemeral: true });
+                await i.reply({ content: 'Ini pencarian party punya orang lain!', ephemeral: true });
                 return;
             }
             const mode = i.customId === 'lfg_competitive' ? 'Competitive' : 'Unrated';
@@ -69,7 +70,7 @@ exports.default = {
         });
         collector.on('end', collected => {
             if (collected.size === 0) {
-                promptMessage.edit({ content: 'Waktu memilih LFG telah habis.', components: [] }).catch(() => { });
+                promptMessage.edit({ content: 'Waktu memilih opsi Party telah habis.', components: [] }).catch(() => { });
             }
         });
     },

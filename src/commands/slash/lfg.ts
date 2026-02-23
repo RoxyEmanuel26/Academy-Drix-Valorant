@@ -5,7 +5,7 @@ import { env } from '../../config/env';
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('lfg')
+        .setName('lfp')
         .setDescription('Cari teman main VALORANT!')
         .addStringOption(option =>
             option.setName('mode')

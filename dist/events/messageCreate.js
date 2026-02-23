@@ -4,6 +4,8 @@ const discord_js_1 = require("discord.js");
 const GuildConfig_1 = require("../database/models/GuildConfig");
 const LfgPost_1 = require("../database/models/LfgPost");
 const embed_1 = require("../utils/embed");
+const discord_js_2 = require("discord.js");
+const env_1 = require("../config/env");
 exports.default = {
     name: discord_js_1.Events.MessageCreate,
     once: false,
@@ -17,7 +19,7 @@ exports.default = {
             if (lfgPost) {
                 if (!lfgPost.active) {
                     if (lfgPost.isTimeout) {
-                        await message.reply('LU TELAT bro! LFG ini udah kelamaan dan batal berangkat. 🗿');
+                        await message.reply('LU TELAT bro! Party ini udah kelamaan dan batal berangkat. 🗿');
                     }
                     else if (lfgPost.participants.length >= 5) {
                         await message.reply('Maaf, team ini udah penuh! 😔');
@@ -25,6 +27,32 @@ exports.default = {
                     return;
                 }
                 const userId = message.author.id;
+                const timeoutMs = env_1.env.bot.lfgTimeoutMinutes * 60 * 1000;
+                // Reply-Driven Timeout Check
+                if (Date.now() - lfgPost.createdAt.getTime() > timeoutMs) {
+                    if (lfgPost.timeoutPrompted) {
+                        await message.reply('Maaf bro, party ini lagi dikonfirmasi ke kaptennya apakah masih main atau sudah kelar. Tunggu sebentar ya! ⏳');
+                        return;
+                    }
+                    // Prompt the Owner First
+                    lfgPost.timeoutPrompted = true;
+                    await lfgPost.save();
+                    const row = new discord_js_2.ActionRowBuilder()
+                        .addComponents(new discord_js_2.ButtonBuilder()
+                        .setCustomId(`lfg_masih_${userId}_${lfgPost._id}`)
+                        .setLabel('Masih')
+                        .setStyle(discord_js_2.ButtonStyle.Success), new discord_js_2.ButtonBuilder()
+                        .setCustomId(`lfg_telat_${lfgPost._id}`)
+                        .setLabel('Telat')
+                        .setStyle(discord_js_2.ButtonStyle.Danger));
+                    if ('send' in message.channel) {
+                        await message.channel.send({
+                            content: `<@${lfgPost.ownerId}> Party kamu udah berumur lebih dari ${env_1.env.bot.lfgTimeoutMinutes} menit nih, tapi ada <@${userId}> yang mau join. Masih mau main atau udahan?`,
+                            components: [row]
+                        });
+                    }
+                    return; // Pause the join process
+                }
                 if (lfgPost.participants.includes(userId)) {
                     await message.reply('Kamu sudah ada di dalam tim ini!');
                     return;
@@ -85,7 +113,7 @@ exports.default = {
         const commandName = args.shift()?.toLowerCase();
         if (!commandName)
             return;
-        const command = client.prefixCommands.get(commandName);
+        const command = client.prefixCommands.get(commandName) || client.prefixCommands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command)
             return;
         try {

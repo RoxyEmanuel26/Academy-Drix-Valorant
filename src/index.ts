@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import { connectDatabase } from './database/connection';
 import { loadEvents } from './utils/eventHandler';
 import { loadCommands } from './utils/commandHandler';
-import { startLfgTimeoutJob } from './jobs/lfgTimeout';
 
 import { env } from './config/env';
 
@@ -45,9 +44,6 @@ const init = async () => {
     // Login
     if (env.discord.token) {
         await client.login(env.discord.token);
-
-        // Start Cron Jobs
-        startLfgTimeoutJob(client);
     } else {
         console.warn('DISCORD_TOKEN is not provided. Bot will not connect to Discord.');
     }

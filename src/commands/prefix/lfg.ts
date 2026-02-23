@@ -4,7 +4,8 @@ import { createLfgEmbed } from '../../utils/embed';
 import { env } from '../../config/env';
 
 export default {
-    name: 'lfg',
+    name: 'lfp',
+    aliases: ['lfg', 'party', 'carimabar', 'mabar', 'valoyuk'],
     description: 'Cari teman main VALORANT!',
     async execute(message: Message, args: string[]) {
         if (!message.guildId) return;
@@ -29,7 +30,7 @@ export default {
             );
 
         const promptMessage = await message.reply({
-            content: 'Pilih mode game untuk LFG kamu:',
+            content: 'Pilih mode game untuk LFP / Mabar kamu:',
             components: [row]
         });
 
@@ -40,7 +41,7 @@ export default {
 
         collector.on('collect', async i => {
             if (i.user.id !== message.author.id) {
-                await i.reply({ content: 'Ini LFG punya orang lain!', ephemeral: true });
+                await i.reply({ content: 'Ini pencarian party punya orang lain!', ephemeral: true });
                 return;
             }
 
@@ -81,7 +82,7 @@ export default {
 
         collector.on('end', collected => {
             if (collected.size === 0) {
-                promptMessage.edit({ content: 'Waktu memilih LFG telah habis.', components: [] }).catch(() => { });
+                promptMessage.edit({ content: 'Waktu memilih opsi Party telah habis.', components: [] }).catch(() => { });
             }
         });
     },
