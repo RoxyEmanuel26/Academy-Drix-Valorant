@@ -9,6 +9,7 @@ export const env = {
         token: process.env.DISCORD_TOKEN || '',
         clientId: process.env.DISCORD_CLIENT_ID || '',
         guildId: process.env.DISCORD_GUILD_ID || '',
+        valorantRoleId: process.env.DISCORD_VALORANT_ROLE_ID || '',
     },
     database: {
         mongoUri: process.env.MONGO_URI || '',

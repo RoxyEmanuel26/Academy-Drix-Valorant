@@ -9,5 +9,6 @@ const lfgPostSchema = new mongoose_1.Schema({
     mode: { type: String, required: true },
     note: { type: String },
     active: { type: Boolean, default: true },
+    participants: { type: [String], default: [] },
 }, { timestamps: true });
 exports.LfgPost = (0, mongoose_1.model)('LfgPost', lfgPostSchema);

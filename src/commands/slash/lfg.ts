@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
-import { createFunEmbed } from '../../utils/embed';
+import { createLfgEmbed } from '../../utils/embed';
+import { env } from '../../config/env';
 
 export default {
     data: new SlashCommandBuilder()
@@ -20,12 +21,13 @@ export default {
         const mode = interaction.options.getString('mode') || 'Unrated';
         const note = interaction.options.getString('note') || 'Ayo main bareng!';
 
-        const embed = createFunEmbed(
-            `🎮 Looking For Group: ${mode}`,
-            `**Player:** <@${interaction.user.id}>\n**Mode:** ${mode}\n**Catatan:** ${note}\n\n*Join voice channel dan balas pesan ini jika ingin ikut!*`
-        ).setThumbnail(interaction.user.displayAvatarURL());
+        const participants = [interaction.user.id];
+        const embed = createLfgEmbed(mode, note, participants)
+            .setThumbnail(interaction.user.displayAvatarURL());
 
-        const reply = await interaction.reply({ content: '@here', embeds: [embed], fetchReply: true });
+        const roleMention = env.discord.valorantRoleId ? `<@&${env.discord.valorantRoleId}>` : '@here';
+
+        const reply = await interaction.reply({ content: roleMention, embeds: [embed], fetchReply: true });
 
         await LfgPost.create({
             guildId: interaction.guildId,
@@ -33,7 +35,8 @@ export default {
             ownerId: interaction.user.id,
             mode,
             note,
-            active: true
+            active: true,
+            participants
         });
     },
 };

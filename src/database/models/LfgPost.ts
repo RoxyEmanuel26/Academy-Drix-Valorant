@@ -7,6 +7,7 @@ export interface ILfgPost extends Document {
     mode: string;
     note: string;
     active: boolean;
+    participants: string[];
 }
 
 const lfgPostSchema = new Schema<ILfgPost>({
@@ -16,6 +17,7 @@ const lfgPostSchema = new Schema<ILfgPost>({
     mode: { type: String, required: true },
     note: { type: String },
     active: { type: Boolean, default: true },
+    participants: { type: [String], default: [] },
 }, { timestamps: true });
 
 export const LfgPost = model<ILfgPost>('LfgPost', lfgPostSchema);

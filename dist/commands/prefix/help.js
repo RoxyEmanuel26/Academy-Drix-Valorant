@@ -31,7 +31,7 @@ exports.default = {
                 return;
             }
             const selection = i.values[0];
-            let newEmbed = (0, embed_1.createFunEmbed)('Bantuan', '');
+            let newEmbed = (0, embed_1.createFunEmbed)('Bantuan', 'Memuat informasi...');
             switch (selection) {
                 // (Cases duplicated from slash command for brevity, normally you'd extract this mapping into a config)
                 case 'account':

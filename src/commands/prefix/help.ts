@@ -40,7 +40,7 @@ export default {
             }
 
             const selection = i.values[0];
-            let newEmbed = createFunEmbed('Bantuan', '');
+            let newEmbed = createFunEmbed('Bantuan', 'Memuat informasi...');
 
             switch (selection) {
                 // (Cases duplicated from slash command for brevity, normally you'd extract this mapping into a config)

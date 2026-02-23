@@ -32,7 +32,7 @@ exports.default = {
                 return;
             }
             const selection = i.values[0];
-            let newEmbed = (0, embed_1.createFunEmbed)('Bantuan', '');
+            let newEmbed = (0, embed_1.createFunEmbed)('Bantuan', 'Memuat informasi...');
             switch (selection) {
                 case 'account':
                     if (!featureFlags_1.featureFlags.valorantStats) {

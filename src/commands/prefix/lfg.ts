@@ -1,6 +1,7 @@
-import { Message } from 'discord.js';
+import { Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
-import { createFunEmbed } from '../../utils/embed';
+import { createLfgEmbed } from '../../utils/embed';
+import { env } from '../../config/env';
 
 export default {
     name: 'lfg',
@@ -8,26 +9,69 @@ export default {
     async execute(message: Message, args: string[]) {
         if (!message.guildId) return;
 
-        const modeInput = args[0]?.toLowerCase();
-        let mode = 'Unrated';
-        if (modeInput === 'comp' || modeInput === 'competitive') mode = 'Competitive';
+        const note = args.join(' ') || 'Ayo main bareng!';
 
-        const note = args.slice(1).join(' ') || 'Ayo main bareng!';
+        const row = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('lfg_unrated')
+                    .setLabel('Mode: Unrated')
+                    .setStyle(ButtonStyle.Success), // Green
+                new ButtonBuilder()
+                    .setCustomId('lfg_competitive')
+                    .setLabel('Mode: Competitive')
+                    .setStyle(ButtonStyle.Danger) // Red
+            );
 
-        const embed = createFunEmbed(
-            `🎮 Looking For Group: ${mode}`,
-            `**Player:** <@${message.author.id}>\n**Mode:** ${mode}\n**Catatan:** ${note}\n\n*Join voice channel dan balas pesan ini jika ingin ikut!*`
-        ).setThumbnail(message.author.displayAvatarURL());
+        const promptMessage = await message.reply({
+            content: 'Pilih mode game untuk LFG kamu:',
+            components: [row]
+        });
 
-        const reply = await message.reply({ content: '@here', embeds: [embed] });
+        const collector = promptMessage.createMessageComponentCollector({
+            componentType: ComponentType.Button,
+            time: 60000
+        });
 
-        await LfgPost.create({
-            guildId: message.guildId,
-            messageId: reply.id,
-            ownerId: message.author.id,
-            mode,
-            note,
-            active: true
+        collector.on('collect', async i => {
+            if (i.user.id !== message.author.id) {
+                await i.reply({ content: 'Ini LFG punya orang lain!', ephemeral: true });
+                return;
+            }
+
+            const mode = i.customId === 'lfg_competitive' ? 'Competitive' : 'Unrated';
+            const participants = [message.author.id];
+
+            const embed = createLfgEmbed(mode, note, participants)
+                .setThumbnail(message.author.displayAvatarURL());
+
+            const roleMention = env.discord.valorantRoleId ? `<@&${env.discord.valorantRoleId}>` : '@here';
+
+            let replyId = '';
+            if ('send' in message.channel) {
+                const reply = await message.channel.send({ content: roleMention, embeds: [embed] });
+                replyId = reply.id;
+            } else {
+                return; // Silently fail if channel can't receive messages
+            }
+
+            await LfgPost.create({
+                guildId: message.guildId!,
+                messageId: replyId,
+                ownerId: message.author.id,
+                mode,
+                note,
+                active: true,
+                participants
+            });
+
+            await promptMessage.delete().catch(() => { });
+        });
+
+        collector.on('end', collected => {
+            if (collected.size === 0) {
+                promptMessage.edit({ content: 'Waktu memilih LFG telah habis.', components: [] }).catch(() => { });
+            }
         });
     },
 };
