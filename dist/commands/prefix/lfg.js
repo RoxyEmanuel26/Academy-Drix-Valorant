@@ -54,7 +54,7 @@ exports.default = {
         });
         collector.on('collect', async (i) => {
             if (i.user.id !== message.author.id) {
-                await i.reply({ content: 'Ini pencarian party punya orang lain!', ephemeral: true });
+                await i.reply({ content: 'Ini pencarian party punya orang lain!', flags: discord_js_1.MessageFlags.Ephemeral });
                 return;
             }
             const mode = i.customId === 'lfg_competitive' ? 'Competitive' : 'Unrated';

@@ -27,10 +27,10 @@ exports.default = {
         .setDescription('Cek status server VALORANT (AP region).'),
     async execute(interaction) {
         if (!(0, featureFlags_1.isFeatureEnabled)('valorantStatus')) {
-            return interaction.reply({ content: 'Fitur status server VALORANT sedang nonaktif.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur status server VALORANT sedang nonaktif.', flags: discord_js_1.MessageFlags.Ephemeral });
         }
         if (!env_1.env.riot.apiKey) {
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API Key belum dikonfigurasi. Fitur belum dapat digunakan.')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API Key belum dikonfigurasi. Fitur belum dapat digunakan.')], flags: discord_js_1.MessageFlags.Ephemeral });
         }
         await interaction.deferReply();
         try {

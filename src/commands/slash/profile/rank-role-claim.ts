@@ -16,7 +16,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, Role } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, Role , MessageFlags } from 'discord.js';
 import { featureFlags } from '../../../config/featureFlags';
 import { VALORANT_RANKS } from '../../../utils/rankDetector';
 import { createFunEmbed } from '../../../utils/embed';
@@ -43,14 +43,14 @@ export default {
 
     async execute(interaction: ChatInputCommandInteraction) {
         if (!featureFlags.profile || !featureFlags.rankFromRole) {
-            return interaction.reply({ content: 'Fitur Profile atau Rank Detection sedang dinonaktifkan.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur Profile atau Rank Detection sedang dinonaktifkan.', flags: MessageFlags.Ephemeral });
         }
 
         const userId = interaction.user.id;
         const now = Date.now();
         // 10 minutes cooldown logic to prevent role-spamming
-        if (cooldowns.has(userId) && (now - cooldowns.get(userId)!) < 600000) {
-            return interaction.reply({ content: '⏳ Tunggu sebentar! Kamu baru saja klaim role rank. Coba lagi dalam 10 menit.', ephemeral: true });
+        if (cooldowns.has(userId) && (now - cooldowns.get(userId)!) < 5000) {
+            return interaction.reply({ content: '⏳ Tunggu sebentar! Kamu baru saja klaim role rank. Coba lagi dalam 5 detik.', flags: MessageFlags.Ephemeral });
         }
 
         await interaction.deferReply({ ephemeral: false });
@@ -115,3 +115,5 @@ export default {
         }
     },
 };
+
+

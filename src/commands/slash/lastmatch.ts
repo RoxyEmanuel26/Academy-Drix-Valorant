@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
 import { User } from '../../database/models/User';
 import { getMatchHistory } from '../../services/riot/api';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
@@ -30,11 +30,11 @@ export default {
         .setDescription('Lihat info match VALORANT terakhir kamu.'),
     async execute(interaction: ChatInputCommandInteraction) {
         if (!isFeatureEnabled('valorantStats')) {
-            return interaction.reply({ content: 'Fitur last match sedang dinonaktifkan oleh admin.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur last match sedang dinonaktifkan oleh admin.', flags: MessageFlags.Ephemeral });
         }
 
         if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], ephemeral: true });
+            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], flags: MessageFlags.Ephemeral });
         }
 
         await interaction.deferReply();
@@ -58,3 +58,4 @@ export default {
         }
     },
 };
+

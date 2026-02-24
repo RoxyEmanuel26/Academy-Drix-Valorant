@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, MessageFlags } from 'discord.js';
 import { featureFlags } from '../../../config/featureFlags';
 import { User } from '../../../database/models/User';
 import { getMemberRank } from '../../../utils/rankDetector';
@@ -29,25 +29,25 @@ export default {
 
     async execute(interaction: ChatInputCommandInteraction) {
         if (!featureFlags.profile) {
-            return interaction.reply({ content: 'Fitur Profile sedang dinonaktifkan oleh admin.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur Profile sedang dinonaktifkan oleh admin.', flags: MessageFlags.Ephemeral });
         }
 
         const callerId = interaction.user.id;
         const now = Date.now();
-        if (cooldowns.has(callerId) && (now - cooldowns.get(callerId)!) < 15000) {
-            return interaction.reply({ content: '⏳ Sabar ya, cooldown command Card adalah 15 detik!', ephemeral: true });
+        if (cooldowns.has(callerId) && (now - cooldowns.get(callerId)!) < 5000) {
+            return interaction.reply({ content: '⏳ Sabar ya, cooldown command Card adalah 5 detik!', flags: MessageFlags.Ephemeral });
         }
 
         const targetUser = interaction.options.getUser('user') || interaction.user;
         const guild = interaction.guild;
-        if (!guild) return interaction.reply({ content: 'Command ini hanya bisa digunakan di server!', ephemeral: true });
+        if (!guild) return interaction.reply({ content: 'Command ini hanya bisa digunakan di server!', flags: MessageFlags.Ephemeral });
 
         let targetMember = interaction.options.getMember('user') as GuildMember;
         if (!targetMember) {
             try {
                 targetMember = await guild.members.fetch(targetUser.id);
             } catch {
-                return interaction.reply({ content: '❌ User tersebut tidak ada di server ini.', ephemeral: true });
+                return interaction.reply({ content: '❌ User tersebut tidak ada di server ini.', flags: MessageFlags.Ephemeral });
             }
         }
 
@@ -63,11 +63,17 @@ export default {
             if (roleNames.some(r => r.includes('prince') && !r.includes('princess'))) gender = 'Laki Laki';
             else if (roleNames.some(r => r.includes('princess'))) gender = 'Perempuan';
 
+            const joinDate = targetMember.joinedAt
+                ? targetMember.joinedAt.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+                : '-';
+
             const attachment = await generateProfileCard({
                 discordId: targetUser.id,
                 username: targetMember.displayName || targetUser.username,
                 gender: gender,
                 rankName: rank,
+                domicile: userDb?.domicile || '-',
+                joinDate: joinDate,
                 avatarUrl: targetUser.displayAvatarURL({ extension: 'png', size: 256 })
             });
 
@@ -79,3 +85,5 @@ export default {
         }
     },
 };
+
+

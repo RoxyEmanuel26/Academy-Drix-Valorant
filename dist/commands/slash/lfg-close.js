@@ -29,7 +29,7 @@ exports.default = {
             return;
         const updateData = await LfgPost_1.LfgPost.updateMany({ guildId: interaction.guildId, ownerId: interaction.user.id, active: true }, { active: false });
         if (updateData.modifiedCount === 0) {
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu tidak punya postingan LFG aktif.')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu tidak punya postingan LFG aktif.')], flags: discord_js_1.MessageFlags.Ephemeral });
         }
         await interaction.reply({ embeds: [(0, embed_1.createFunEmbed)('❌ LFG Ditutup', `Berhasil menutup ${updateData.modifiedCount} postingan LFG kamu.`)] });
     },

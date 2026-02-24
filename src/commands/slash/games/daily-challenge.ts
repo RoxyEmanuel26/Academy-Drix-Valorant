@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, TextChannel, Message } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, TextChannel, Message , MessageFlags } from 'discord.js';
 import { agents, agentEmojiHints } from '../../../data/valorant';
 import { activeGames, setGameActive, setGameInactive, isAnswerCorrect } from '../../../utils/gameState';
 import { addPoints, POINT_CONFIG, hasClaimedDaily, claimDaily } from '../../../services/gamePointsService';
@@ -31,12 +31,12 @@ export default {
 
         const claimed = await hasClaimedDaily(interaction.guildId, interaction.user.id);
         if (claimed) {
-            await interaction.reply({ content: '❌ Kamu sudah menyelesaikan Daily Challenge hari ini! Coba lagi besok ya.', ephemeral: true });
+            await interaction.reply({ content: '❌ Kamu sudah menyelesaikan Daily Challenge hari ini! Coba lagi besok ya.', flags: MessageFlags.Ephemeral });
             return;
         }
 
         if (!setGameActive(interaction.channel.id, 'daily_challenge')) {
-            await interaction.reply({ content: 'Sedang ada game yang berjalan di channel ini! Tunggu gamenya selesai untuk main Daily Challenge-mu. 🎮', ephemeral: true });
+            await interaction.reply({ content: 'Sedang ada game yang berjalan di channel ini! Tunggu gamenya selesai untuk main Daily Challenge-mu. 🎮', flags: MessageFlags.Ephemeral });
             return;
         }
 
@@ -120,3 +120,4 @@ export default {
         });
     },
 };
+

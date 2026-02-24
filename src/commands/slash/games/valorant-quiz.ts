@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, TextChannel } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, TextChannel , MessageFlags } from 'discord.js';
 import { quizQuestions } from '../../../data/valorant';
 import { activeGames, setGameActive, setGameInactive } from '../../../utils/gameState';
 import { addPoints, POINT_CONFIG } from '../../../services/gamePointsService';
@@ -39,7 +39,7 @@ export default {
         if (!interaction.channel) return;
 
         if (!setGameActive(interaction.channel.id, 'valorant_quiz')) {
-            await interaction.reply({ content: 'Sedang ada game yang berjalan di channel ini! Tunggu sebentar ya 🎮', ephemeral: true });
+            await interaction.reply({ content: 'Sedang ada game yang berjalan di channel ini! Tunggu sebentar ya 🎮', flags: MessageFlags.Ephemeral });
             return;
         }
 
@@ -97,7 +97,7 @@ export default {
 
             if (isCorrect) {
                 if (answered) {
-                    await i.reply({ content: 'Seseorang sudah menjawab benar duluan! 🏃💨', ephemeral: true });
+                    await i.reply({ content: 'Seseorang sudah menjawab benar duluan! 🏃💨', flags: MessageFlags.Ephemeral });
                     return;
                 }
 
@@ -150,10 +150,10 @@ export default {
 
                 } catch (error) {
                     console.error('Failed to add points:', error);
-                    await i.reply({ content: `Bener bro! Jawabannya **${questionData.answer}**. Sayang DB poin error!`, ephemeral: true });
+                    await i.reply({ content: `Bener bro! Jawabannya **${questionData.answer}**. Sayang DB poin error!`, flags: MessageFlags.Ephemeral });
                 }
             } else {
-                await i.reply({ content: 'Jawaban kamu salah! ❌', ephemeral: true });
+                await i.reply({ content: 'Jawaban kamu salah! ❌', flags: MessageFlags.Ephemeral });
             }
         });
 
@@ -180,3 +180,4 @@ export default {
         });
     },
 };
+

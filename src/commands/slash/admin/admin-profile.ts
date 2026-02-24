@@ -16,7 +16,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionsBitField, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionsBitField, EmbedBuilder , MessageFlags } from 'discord.js';
 import { featureFlags } from '../../../config/featureFlags';
 import { User } from '../../../database/models/User';
 
@@ -48,7 +48,7 @@ export default {
 
     async execute(interaction: ChatInputCommandInteraction) {
         if (!featureFlags.profile) {
-            return interaction.reply({ content: 'Fitur Profile sedang dinonaktifkan.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur Profile sedang dinonaktifkan.', flags: MessageFlags.Ephemeral });
         }
 
         const subcmd = interaction.options.getSubcommand();
@@ -57,7 +57,7 @@ export default {
         if (subcmd === 'view') {
             const userDb = await User.findOne({ discordId: targetUser.id });
             if (!userDb) {
-                return interaction.reply({ content: 'Data User belum ada di database (Belum pernah main/set bio).', ephemeral: true });
+                return interaction.reply({ content: 'Data User belum ada di database (Belum pernah main/set bio).', flags: MessageFlags.Ephemeral });
             }
 
             const embed = new EmbedBuilder()
@@ -73,7 +73,7 @@ export default {
                     { name: 'Created', value: userDb.createdAt ? new Date(userDb.createdAt as any).toLocaleString() : '*unknown*', inline: true }
                 );
 
-            return interaction.reply({ embeds: [embed], ephemeral: true });
+            return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         }
 
         if (subcmd === 'reset') {
@@ -81,7 +81,7 @@ export default {
             const userDb = await User.findOne({ discordId: targetUser.id });
 
             if (!userDb) {
-                return interaction.reply({ content: 'Data User belum ada di database.', ephemeral: true });
+                return interaction.reply({ content: 'Data User belum ada di database.', flags: MessageFlags.Ephemeral });
             }
 
             if (field === 'bio' || field === 'all') {
@@ -100,3 +100,4 @@ export default {
         }
     },
 };
+

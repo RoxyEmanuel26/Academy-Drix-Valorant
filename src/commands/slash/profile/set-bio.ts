@@ -16,7 +16,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder , MessageFlags } from 'discord.js';
 import { featureFlags } from '../../../config/featureFlags';
 
 const cooldowns = new Map<string, number>();
@@ -27,14 +27,14 @@ export default {
         .setDescription('Buat kalimat bio diri kamu untuk dipajang di Profile Card (Max 100 character)'),
     async execute(interaction: ChatInputCommandInteraction) {
         if (!featureFlags.profile) {
-            return interaction.reply({ content: 'Fitur profil sedang dimatikan oleh admin.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur profil sedang dimatikan oleh admin.', flags: MessageFlags.Ephemeral });
         }
 
         // 1 Minute cooldown array
         const userId = interaction.user.id;
         const now = Date.now();
-        if (cooldowns.has(userId) && (now - cooldowns.get(userId)!) < 60000) {
-            return interaction.reply({ content: '⏳ Tunggu sebentar! Kamu baru saja mengganti bio. Coba lagi dalam 1 menit.', ephemeral: true });
+        if (cooldowns.has(userId) && (now - cooldowns.get(userId)!) < 5000) {
+            return interaction.reply({ content: '⏳ Tunggu sebentar! Kamu baru saja mengganti bio. Coba lagi dalam 5 detik.', flags: MessageFlags.Ephemeral });
         }
 
         const modal = new ModalBuilder()
@@ -55,3 +55,5 @@ export default {
         await interaction.showModal(modal);
     },
 };
+
+

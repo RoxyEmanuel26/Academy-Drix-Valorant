@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType , MessageFlags } from 'discord.js';
 
 export const totQuestions = [
     { title: "Lebih OP mana?", a: "Vandal", b: "Phantom" },
@@ -77,7 +77,7 @@ export default {
                 votesB.add(i.user.id);
             }
 
-            await i.reply({ content: `Suara kamu masuk! Pilihan: ${i.customId === 'tot_a' ? item.a : item.b}`, ephemeral: true });
+            await i.reply({ content: `Suara kamu masuk! Pilihan: ${i.customId === 'tot_a' ? item.a : item.b}`, flags: MessageFlags.Ephemeral });
         });
 
         collector.on('end', async () => {
@@ -106,3 +106,4 @@ export default {
         });
     },
 };
+

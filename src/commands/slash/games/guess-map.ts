@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, TextChannel, Message } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, TextChannel, Message , MessageFlags } from 'discord.js';
 import { maps, mapClues } from '../../../data/valorant';
 import { activeGames, setGameActive, setGameInactive, isAnswerCorrect } from '../../../utils/gameState';
 import { addPoints, POINT_CONFIG } from '../../../services/gamePointsService';
@@ -30,7 +30,7 @@ export default {
         if (!interaction.channel) return;
 
         if (!setGameActive(interaction.channel.id, 'guess_map')) {
-            await interaction.reply({ content: 'Sedang ada game yang berjalan di channel ini! Tunggu sebentar ya 🎮', ephemeral: true });
+            await interaction.reply({ content: 'Sedang ada game yang berjalan di channel ini! Tunggu sebentar ya 🎮', flags: MessageFlags.Ephemeral });
             return;
         }
 
@@ -111,3 +111,4 @@ export default {
         });
     },
 };
+

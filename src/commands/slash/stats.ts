@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
 import { isFeatureEnabled } from '../../config/featureFlags';
@@ -31,20 +31,20 @@ export default {
             option.setName('user').setDescription('Pilih player').setRequired(true)),
     async execute(interaction: ChatInputCommandInteraction) {
         if (!isFeatureEnabled('valorantStats')) {
-            return interaction.reply({ content: 'Fitur statistik VALORANT sedang dinonaktifkan oleh admin.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur statistik VALORANT sedang dinonaktifkan oleh admin.', flags: MessageFlags.Ephemeral });
         }
 
         if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], ephemeral: true });
+            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], flags: MessageFlags.Ephemeral });
         }
 
         const target = interaction.options.getUser('user');
-        if (!target) return interaction.reply({ content: 'User tidak ditemukan', ephemeral: true });
+        if (!target) return interaction.reply({ content: 'User tidak ditemukan', flags: MessageFlags.Ephemeral });
 
         const user = await User.findOne({ discordId: target.id });
 
         if (!user || !user.optIn) {
-            return interaction.reply({ embeds: [createErrorEmbed(`<@${target.id}> belum menghubungkan akun Riot mereka.`)], ephemeral: true });
+            return interaction.reply({ embeds: [createErrorEmbed(`<@${target.id}> belum menghubungkan akun Riot mereka.`)], flags: MessageFlags.Ephemeral });
         }
 
         const stats = user.statsCache || { rank: 'Unranked', winrate: 50, totalWins: 10, totalLosses: 10 };
@@ -56,3 +56,4 @@ export default {
         await interaction.reply({ embeds: [embed] });
     },
 };
+

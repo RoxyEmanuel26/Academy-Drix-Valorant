@@ -19,6 +19,8 @@ export interface IDCardData {
     username: string;
     gender: string;
     rankName: string;
+    domicile: string;
+    joinDate: string;
     avatarUrl: string;
 }
 
@@ -56,11 +58,12 @@ export async function generateProfileCard(data: IDCardData): Promise<AttachmentB
     // Field Titles
     ctx.fillText('No ID', startX, startY);
     ctx.fillText('Nama', startX, startY + lineHeight * 1);
-    ctx.fillText('Jenis Kelamin', startX, startY + lineHeight * 2);
-    ctx.fillText('Rank', startX, startY + lineHeight * 3);
+    ctx.fillText('Domisili', startX, startY + lineHeight * 2);
+    ctx.fillText('Jenis Kelamin', startX, startY + lineHeight * 3);
+    ctx.fillText('Rank', startX, startY + lineHeight * 4);
 
     // Colons
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
         ctx.fillText(':', startX + 170, startY + (lineHeight * i));
     }
 
@@ -68,16 +71,17 @@ export async function generateProfileCard(data: IDCardData): Promise<AttachmentB
     ctx.font = 'bold 24px sans-serif';
     ctx.fillText(data.discordId, valueX, startY);
     ctx.fillText(data.username, valueX, startY + lineHeight * 1);
-    ctx.fillText(data.gender, valueX, startY + lineHeight * 2);
-    ctx.fillText(data.rankName, valueX, startY + lineHeight * 3);
+    ctx.fillText(data.domicile, valueX, startY + lineHeight * 2);
+    ctx.fillText(data.gender, valueX, startY + lineHeight * 3);
+    ctx.fillText(data.rankName, valueX, startY + lineHeight * 4);
 
     // 4. Draw Avatar (Right Side block)
+    const avatarSize = 200;
+    const xAvatar = 540;
+    const yAvatar = 140;
+
     try {
         const avatarImage = await loadImage(data.avatarUrl);
-
-        const avatarSize = 200;
-        const xAvatar = 540;
-        const yAvatar = 140;
 
         // Clip avatar as a rounded square or circle (Let's do rounded square to mimic photo)
         ctx.save();
@@ -107,10 +111,20 @@ export async function generateProfileCard(data: IDCardData): Promise<AttachmentB
         console.error('Failed to load avatar user for canvas', e);
     }
 
-    // 5. Draw Member Since / Footer if desired (optional, maybe skip to keep it clean)
-    // ctx.font = '16px sans-serif';
-    // ctx.textAlign = 'right';
-    // ctx.fillText(`ID Card Generated via WonderPlay`, canvas.width - 20, canvas.height - 20);
+    // 5. Draw Member Since / Footer Dates below Avatar
+    ctx.font = 'bold 20px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#000000'; // Make black so it is visible against the white background
+
+    const dateParts = data.joinDate.split(' ');
+    // Split the date text into two lines: 'DD Bulan' and 'YYYY'
+    if (dateParts.length >= 3) {
+        ctx.fillText(dateParts[0] + ' ' + dateParts[1], xAvatar + (avatarSize / 2), yAvatar + avatarSize + 35);
+        ctx.fillText(dateParts[2], xAvatar + (avatarSize / 2), yAvatar + avatarSize + 60);
+    } else {
+        ctx.fillText(data.joinDate, xAvatar + (avatarSize / 2), yAvatar + avatarSize + 35);
+    }
+
 
     const buffer = await canvas.encode('png');
     return new AttachmentBuilder(buffer, { name: 'profile-card.png' });

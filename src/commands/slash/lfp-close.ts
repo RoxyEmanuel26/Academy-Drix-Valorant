@@ -10,7 +10,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
 
@@ -27,9 +27,10 @@ export default {
         );
 
         if (updateData.modifiedCount === 0) {
-            return interaction.reply({ embeds: [createErrorEmbed('Kamu tidak punya postingan LFP aktif.')], ephemeral: true });
+            return interaction.reply({ embeds: [createErrorEmbed('Kamu tidak punya postingan LFP aktif.')], flags: MessageFlags.Ephemeral });
         }
 
         await interaction.reply({ embeds: [createFunEmbed('❌ LFP Ditutup', `Berhasil menutup ${updateData.modifiedCount} postingan LFP kamu.`)] });
     },
 };
+

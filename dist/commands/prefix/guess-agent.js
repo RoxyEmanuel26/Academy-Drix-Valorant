@@ -42,7 +42,7 @@ exports.default = {
         const collector = response.createMessageComponentCollector({ componentType: discord_js_1.ComponentType.Button, time: 15000 });
         collector.on('collect', async (i) => {
             if (i.user.id !== message.author.id) {
-                await i.reply({ content: 'Ini bukan game tebakanmu!', ephemeral: true });
+                await i.reply({ content: 'Ini bukan game tebakanmu!', flags: discord_js_1.MessageFlags.Ephemeral });
                 return;
             }
             const guessed = i.customId.split('_')[1];

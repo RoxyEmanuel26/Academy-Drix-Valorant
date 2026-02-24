@@ -32,10 +32,10 @@ exports.default = {
         .addChoices({ name: 'Rank', value: 'rank' }, { name: 'Winrate', value: 'winrate' }, { name: 'KDA', value: 'kda' })),
     async execute(interaction) {
         if (!(0, featureFlags_1.isFeatureEnabled)('valorantLeaderboards')) {
-            return interaction.reply({ content: 'Fitur leaderboard VALORANT sedang dinonaktifkan oleh admin.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur leaderboard VALORANT sedang dinonaktifkan oleh admin.', flags: discord_js_1.MessageFlags.Ephemeral });
         }
         if (!env_1.env.riot.apiKey || !env_1.env.riot.rso.clientId || !env_1.env.riot.rso.clientSecret || !env_1.env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API/RSO belum dikonfigurasi sepenuhnya. Fitur belum dapat digunakan.')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API/RSO belum dikonfigurasi sepenuhnya. Fitur belum dapat digunakan.')], flags: discord_js_1.MessageFlags.Ephemeral });
         }
         const users = await User_1.User.find({ optIn: true }).exec();
         if (users.length === 0) {

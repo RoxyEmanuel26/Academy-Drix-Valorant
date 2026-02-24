@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder , MessageFlags } from 'discord.js';
 import { getLeaderboard } from '../../../services/gamePointsService';
 
 export default {
@@ -41,7 +41,7 @@ export default {
         const top10 = await getLeaderboard(interaction.guildId, category, 10);
 
         if (top10.length === 0) {
-            await interaction.reply({ content: 'Belum ada data poin untuk kategori ini.', ephemeral: true });
+            await interaction.reply({ content: 'Belum ada data poin untuk kategori ini.', flags: MessageFlags.Ephemeral });
             return;
         }
 
@@ -74,3 +74,4 @@ export default {
         await interaction.reply({ embeds: [embed] });
     },
 };
+

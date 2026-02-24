@@ -45,7 +45,7 @@ exports.default = {
         const collector = response.createMessageComponentCollector({ componentType: discord_js_1.ComponentType.StringSelect, time: 60000 });
         collector.on('collect', async (i) => {
             if (i.user.id !== interaction.user.id) {
-                await i.reply({ content: 'Ini menu help punya orang lain! Gunakan `/help` sendiri ya.', ephemeral: true });
+                await i.reply({ content: 'Ini menu help punya orang lain! Gunakan `/help` sendiri ya.', flags: discord_js_1.MessageFlags.Ephemeral });
                 return;
             }
             const selection = i.values[0];

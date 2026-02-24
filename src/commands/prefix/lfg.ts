@@ -17,7 +17,7 @@
  */
 
 
-import { Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
+import { Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType , MessageFlags } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
 import { GuildConfig } from '../../database/models/GuildConfig';
 import { createLfgEmbed } from '../../utils/embed';
@@ -62,7 +62,7 @@ export default {
 
         collector.on('collect', async i => {
             if (i.user.id !== message.author.id) {
-                await i.reply({ content: 'Ini pencarian party punya orang lain!', ephemeral: true });
+                await i.reply({ content: 'Ini pencarian party punya orang lain!', flags: MessageFlags.Ephemeral });
                 return;
             }
 
@@ -108,3 +108,4 @@ export default {
         });
     },
 };
+

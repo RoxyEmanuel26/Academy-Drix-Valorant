@@ -27,16 +27,16 @@ exports.default = {
         .setDescription('Hapus hubungan akun Riot dari bot ini.'),
     async execute(interaction) {
         if (!(0, featureFlags_1.isFeatureEnabled)('valorantStats')) {
-            return interaction.reply({ content: 'Fitur akun dan statistik VALORANT sedang dinonaktifkan oleh admin.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur akun dan statistik VALORANT sedang dinonaktifkan oleh admin.', flags: discord_js_1.MessageFlags.Ephemeral });
         }
         const user = await User_1.User.findOne({ discordId: interaction.user.id });
         if (!user || !user.optIn) {
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot apa pun!')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot apa pun!')], flags: discord_js_1.MessageFlags.Ephemeral });
         }
         await User_1.User.deleteOne({ discordId: interaction.user.id });
         await interaction.reply({
             embeds: [(0, embed_1.createFunEmbed)('💔 Unlinked', 'Akun Riot kamu telah berhasil dihapus dari sistem kami. Kami harap kamu kembali lagi nanti!')],
-            ephemeral: true
+            flags: discord_js_1.MessageFlags.Ephemeral
         });
     },
 };

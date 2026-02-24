@@ -10,7 +10,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember , MessageFlags } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
 import { GuildConfig } from '../../database/models/GuildConfig';
 import { createLfgEmbed } from '../../utils/embed';
@@ -34,7 +34,7 @@ export default {
         const config = await GuildConfig.findOne({ guildId: interaction.guildId });
 
         if (config?.lfgChannelId && interaction.channelId !== config.lfgChannelId) {
-            await interaction.reply({ content: `Silakan cari party game di channel <#${config.lfgChannelId}>`, ephemeral: true });
+            await interaction.reply({ content: `Silakan cari party game di channel <#${config.lfgChannelId}>`, flags: MessageFlags.Ephemeral });
             return;
         }
 
@@ -65,3 +65,4 @@ export default {
         });
     },
 };
+

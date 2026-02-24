@@ -34,6 +34,16 @@ export interface IUser extends Document {
         winrate?: number;
     };
 
+    // Personal Info (Parsed from Intros)
+    name?: string;
+    age?: string;
+    birthdate?: string;
+    pronouns?: string;
+    domicile?: string;
+    hobbies?: string;
+    mbti?: string;
+    sosmed?: string;
+
     // Profile Customization
     mainAgent?: string;
     mainAgent2?: string;
@@ -63,10 +73,21 @@ const userSchema = new Schema<IUser>({
         winrate: Number,
     },
 
+    // Profile Fields
     mainAgent: { type: String },
     mainAgent2: { type: String },
     mainAgent3: { type: String },
     bio: { type: String, maxlength: 100 },
+
+    // Parsed Intro Fields
+    name: { type: String },
+    age: { type: String },
+    birthdate: { type: String },
+    pronouns: { type: String },
+    domicile: { type: String, maxlength: 30 },
+    hobbies: { type: String },
+    mbti: { type: String },
+    sosmed: { type: String },
 
     lastKnownRank: { type: String, default: 'Unranked' },
     lastKnownRankSource: { type: String, enum: ['riot_api', 'discord_role', 'manual'], default: 'manual' },

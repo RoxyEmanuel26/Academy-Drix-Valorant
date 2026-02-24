@@ -10,7 +10,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits , MessageFlags } from 'discord.js';
 import { GuildConfig } from '../../database/models/GuildConfig';
 import { createFunEmbed } from '../../utils/embed';
 
@@ -40,7 +40,7 @@ export default {
         const valorantRole = interaction.options.getRole('valorant-role');
 
         if (!lfgChannel && !introChannel && !valorantRole) {
-            return interaction.reply({ content: '❌ Silakan pilih minimal satu opsi untuk disetel.', ephemeral: true });
+            return interaction.reply({ content: '❌ Silakan pilih minimal satu opsi untuk disetel.' });
         }
 
         // Fetch or create config
@@ -74,3 +74,5 @@ export default {
         await interaction.reply({ embeds: [embed] });
     },
 };
+
+

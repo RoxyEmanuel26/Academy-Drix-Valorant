@@ -37,7 +37,7 @@ exports.default = {
             return;
         const config = await GuildConfig_1.GuildConfig.findOne({ guildId: interaction.guildId });
         if (config?.lfgChannelId && interaction.channelId !== config.lfgChannelId) {
-            await interaction.reply({ content: `Silakan cari party game di channel <#${config.lfgChannelId}>`, ephemeral: true });
+            await interaction.reply({ content: `Silakan cari party game di channel <#${config.lfgChannelId}>`, flags: discord_js_1.MessageFlags.Ephemeral });
             return;
         }
         const mode = interaction.options.getString('mode') || 'Unrated';

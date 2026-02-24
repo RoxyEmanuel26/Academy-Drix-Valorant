@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
 import { isFeatureEnabled } from '../../config/featureFlags';
 import { env } from '../../config/env';
@@ -28,11 +28,11 @@ export default {
         .setDescription('Cek status server VALORANT (AP region).'),
     async execute(interaction: ChatInputCommandInteraction) {
         if (!isFeatureEnabled('valorantStatus')) {
-            return interaction.reply({ content: 'Fitur status server VALORANT sedang nonaktif.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur status server VALORANT sedang nonaktif.', flags: MessageFlags.Ephemeral });
         }
 
         if (!env.riot.apiKey) {
-            return interaction.reply({ embeds: [createErrorEmbed('Riot API Key belum dikonfigurasi. Fitur belum dapat digunakan.')], ephemeral: true });
+            return interaction.reply({ embeds: [createErrorEmbed('Riot API Key belum dikonfigurasi. Fitur belum dapat digunakan.')], flags: MessageFlags.Ephemeral });
         }
 
         await interaction.deferReply();
@@ -50,3 +50,4 @@ export default {
         }
     },
 };
+

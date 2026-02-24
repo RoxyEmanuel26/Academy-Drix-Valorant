@@ -35,8 +35,8 @@ export default {
 
         const userId = message.author.id;
         const now = Date.now();
-        if (cooldowns.has(userId) && (now - cooldowns.get(userId)!) < 600000) {
-            return message.reply('⏳ Tunggu sebentar! Kamu baru saja klaim role rank. Coba lagi dalam 10 menit.');
+        if (cooldowns.has(userId) && (now - cooldowns.get(userId)!) < 5000) {
+            return message.reply('⏳ Tunggu sebentar! Kamu baru saja klaim role rank. Coba lagi dalam 5 detik.');
         }
 
         if (args.length === 0) {
@@ -99,3 +99,4 @@ export default {
         }
     },
 };
+

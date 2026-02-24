@@ -30,7 +30,7 @@ exports.default = {
             return;
         const user = await User_1.User.findOne({ discordId: interaction.user.id });
         if (!user || !user.optIn)
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot! `/link`')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot! `/link`')], flags: discord_js_1.MessageFlags.Ephemeral });
         let missions = await Mission_1.Mission.find({ guildId: interaction.guildId, userId: interaction.user.id, completed: false });
         if (missions.length === 0) {
             const newMission = new Mission_1.Mission({

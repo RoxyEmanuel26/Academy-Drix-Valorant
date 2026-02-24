@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
 import { isFeatureEnabled } from '../../config/featureFlags';
@@ -38,11 +38,11 @@ export default {
                 )),
     async execute(interaction: ChatInputCommandInteraction) {
         if (!isFeatureEnabled('valorantLeaderboards')) {
-            return interaction.reply({ content: 'Fitur leaderboard VALORANT sedang dinonaktifkan oleh admin.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur leaderboard VALORANT sedang dinonaktifkan oleh admin.', flags: MessageFlags.Ephemeral });
         }
 
         if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi sepenuhnya. Fitur belum dapat digunakan.')], ephemeral: true });
+            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi sepenuhnya. Fitur belum dapat digunakan.')], flags: MessageFlags.Ephemeral });
         }
 
         const users = await User.find({ optIn: true }).exec();
@@ -76,3 +76,4 @@ export default {
         await interaction.reply({ embeds: [embed] });
     },
 };
+

@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits , MessageFlags } from 'discord.js';
 import { createFunEmbed } from '../../utils/embed';
 
 export default {
@@ -31,6 +31,8 @@ export default {
             '`/admin-parse-intros` - Mengekstrak Bio player lawas dari riwayat channel #introducing\n'
         );
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        await interaction.reply({ embeds: [embed] });
     },
 };
+
+

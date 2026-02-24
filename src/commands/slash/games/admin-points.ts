@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits, EmbedBuilder , MessageFlags } from 'discord.js';
 import { GamePoints } from '../../../database/models/GamePoints';
 
 export default {
@@ -48,7 +48,7 @@ export default {
 
         if (subcmd === 'reset_weekly') {
             await GamePoints.updateMany({ guildId: interaction.guildId }, { $set: { weeklyPoints: 0 } });
-            await interaction.reply({ content: '✅ Poin mingguan seluruh pemain di server ini telah direset.', ephemeral: true });
+            await interaction.reply({ content: '✅ Poin mingguan seluruh pemain di server ini telah direset.', flags: MessageFlags.Ephemeral });
             return;
         }
 
@@ -60,7 +60,7 @@ export default {
 
         if (!userStats) {
             if (subcmd === 'remove') {
-                await interaction.reply({ content: `❌ ${user.username} tidak memiliki data poin.`, ephemeral: true });
+                await interaction.reply({ content: `❌ ${user.username} tidak memiliki data poin.`, flags: MessageFlags.Ephemeral });
                 return;
             }
             userStats = new GamePoints({ guildId: interaction.guildId, userId: user.id, username: user.username });
@@ -91,7 +91,8 @@ export default {
             userStats.monthlyPoints = Math.max(0, userStats.monthlyPoints - amount);
             await userStats.save();
 
-            await interaction.reply({ content: `✅ Berhasil mengurangi ${amount} poin dari ${user.username}.`, ephemeral: true });
+            await interaction.reply({ content: `✅ Berhasil mengurangi ${amount} poin dari ${user.username}.`, flags: MessageFlags.Ephemeral });
         }
     },
 };
+

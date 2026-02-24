@@ -35,8 +35,8 @@ export default {
 
         const userId = message.author.id;
         const now = Date.now();
-        if (cooldowns.has(userId) && (now - cooldowns.get(userId)!) < 60000) {
-            return message.reply('⏳ Tunggu sebentar! Kamu baru saja mengatur bio. Coba lagi dalam 1 menit.');
+        if (cooldowns.has(userId) && (now - cooldowns.get(userId)!) < 5000) {
+            return message.reply('⏳ Tunggu sebentar! Kamu baru saja mengatur bio. Coba lagi dalam 5 detik.');
         }
 
         let bioText = args.join(' ').trim();
@@ -76,3 +76,4 @@ export default {
         return message.reply({ embeds: [embed] });
     },
 };
+

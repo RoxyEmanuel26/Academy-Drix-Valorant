@@ -16,7 +16,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionsBitField, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionsBitField, EmbedBuilder , MessageFlags } from 'discord.js';
 import { VALORANT_RANKS } from '../../../utils/rankDetector';
 import { featureFlags } from '../../../config/featureFlags';
 
@@ -28,11 +28,11 @@ export default {
 
     async execute(interaction: ChatInputCommandInteraction) {
         if (!featureFlags.profile || !featureFlags.rankFromRole) {
-            return interaction.reply({ content: 'Fitur Profile Rank sedang dinonaktifkan.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur Profile Rank sedang dinonaktifkan.', flags: MessageFlags.Ephemeral });
         }
 
         const guild = interaction.guild;
-        if (!guild) return interaction.reply({ content: 'Gunakan command di server.', ephemeral: true });
+        if (!guild) return interaction.reply({ content: 'Gunakan command di server.', flags: MessageFlags.Ephemeral });
 
         // Map server roles logic
         const serverRoles = guild.roles.cache.values();
@@ -70,6 +70,7 @@ export default {
         embed.addFields({ name: 'Role Associations', value: lines.join('\n') });
         embed.setFooter({ text: 'Agar terdeteksi, role harus mengandung nama rank (cth: "🔥 Radiant" atau "Ascendant")' });
 
-        return interaction.reply({ embeds: [embed], ephemeral: true });
+        return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     },
 };
+

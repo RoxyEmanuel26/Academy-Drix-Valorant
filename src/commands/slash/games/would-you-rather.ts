@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType , MessageFlags } from 'discord.js';
 import { wyrQuestions } from '../../../data/valorant';
 
 export default {
@@ -65,7 +65,7 @@ export default {
                 votesB.add(i.user.id);
             }
 
-            await i.reply({ content: `Kamu memilih ${i.customId === 'wyr_a' ? 'Merah 🔴' : 'Biru 🔵'}`, ephemeral: true });
+            await i.reply({ content: `Kamu memilih ${i.customId === 'wyr_a' ? 'Merah 🔴' : 'Biru 🔵'}`, flags: MessageFlags.Ephemeral });
         });
 
         collector.on('end', async () => {
@@ -95,3 +95,4 @@ export default {
         });
     },
 };
+

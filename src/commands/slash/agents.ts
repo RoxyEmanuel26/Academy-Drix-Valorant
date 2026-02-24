@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
 import { createFunEmbed } from '../../utils/embed';
 import { isFeatureEnabled } from '../../config/featureFlags';
 
@@ -27,7 +27,7 @@ export default {
         .setDescription('Daftar tipe/role Agent VALORANT.'),
     async execute(interaction: ChatInputCommandInteraction) {
         if (!isFeatureEnabled('valorantContent')) {
-            return interaction.reply({ content: 'Informasi agent sedang dimatikan.', ephemeral: true });
+            return interaction.reply({ content: 'Informasi agent sedang dimatikan.', flags: MessageFlags.Ephemeral });
         }
 
         const embed = createFunEmbed(
@@ -37,3 +37,4 @@ export default {
         await interaction.reply({ embeds: [embed] });
     },
 };
+

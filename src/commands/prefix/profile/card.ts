@@ -28,8 +28,8 @@ export default {
 
         const callerId = message.author.id;
         const now = Date.now();
-        if (cooldowns.has(callerId) && (now - cooldowns.get(callerId)!) < 15000) {
-            return message.reply('⏳ Sabar ya, cooldown command Card adalah 15 detik!');
+        if (cooldowns.has(callerId) && (now - cooldowns.get(callerId)!) < 5000) {
+            return message.reply('⏳ Sabar ya, cooldown command Card adalah 5 detik!');
         }
 
         const guild = message.guild;
@@ -58,11 +58,18 @@ export default {
             if (roleNames.some(r => r.includes('prince') && !r.includes('princess'))) gender = 'Laki Laki';
             else if (roleNames.some(r => r.includes('princess'))) gender = 'Perempuan';
 
+            // Format date locale id-ID (e.g., 20 Maret 2026)
+            const joinDate = targetMember.joinedAt
+                ? targetMember.joinedAt.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+                : '-';
+
             const attachment = await generateProfileCard({
                 discordId: targetUser.id,
                 username: targetMember.displayName || targetUser.username,
                 gender: gender,
                 rankName: rank,
+                domicile: userDb?.domicile || '-',
+                joinDate: joinDate,
                 avatarUrl: targetUser.displayAvatarURL({ extension: 'png', size: 256 })
             });
 
@@ -74,3 +81,4 @@ export default {
         }
     },
 };
+

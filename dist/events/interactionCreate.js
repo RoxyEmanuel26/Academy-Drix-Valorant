@@ -54,11 +54,11 @@ exports.default = {
                 try {
                     const lfgPost = await LfgPost_1.LfgPost.findById(lfgId);
                     if (!lfgPost) {
-                        await interaction.reply({ content: 'Party ini sudah tidak ditemukan di database.', ephemeral: true });
+                        await interaction.reply({ content: 'Party ini sudah tidak ditemukan di database.', flags: discord_js_1.MessageFlags.Ephemeral });
                         return;
                     }
                     if (interaction.user.id !== lfgPost.ownerId) {
-                        await interaction.reply({ content: 'Hanya pembuat Party yang bisa menekan tombol ini!', ephemeral: true });
+                        await interaction.reply({ content: 'Hanya pembuat Party yang bisa menekan tombol ini!', flags: discord_js_1.MessageFlags.Ephemeral });
                         return;
                     }
                     if (action === 'masih') {
@@ -118,12 +118,12 @@ exports.default = {
                             console.error('Failed to update timed out LFG embed:', e);
                         }
                         await interaction.message.delete().catch(() => { });
-                        await interaction.reply({ content: 'Oke, Party ini ditandai sebagai batal / telat. 🛑', ephemeral: true });
+                        await interaction.reply({ content: 'Oke, Party ini ditandai sebagai batal / telat. 🛑', flags: discord_js_1.MessageFlags.Ephemeral });
                     }
                 }
                 catch (err) {
                     console.error('LFG Timeout Button Error:', err);
-                    await interaction.reply({ content: 'Terjadi kesalahan saat memproses.', ephemeral: true });
+                    await interaction.reply({ content: 'Terjadi kesalahan saat memproses.', flags: discord_js_1.MessageFlags.Ephemeral });
                 }
                 return;
             }
@@ -139,15 +139,15 @@ exports.default = {
                 const agent3 = agent3Raw ? sanitizeAgent(agent3Raw) : '';
                 const validAgents = Object.keys(valorant_1.agentEmojiHints);
                 if (!validAgents.includes(agent1)) {
-                    await interaction.reply({ content: `❌ Agent \`${agent1}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    await interaction.reply({ content: `❌ Agent \`${agent1}\` tidak ditemukan di database game VALORANT.`, flags: discord_js_1.MessageFlags.Ephemeral });
                     return;
                 }
                 if (agent2 && !validAgents.includes(agent2)) {
-                    await interaction.reply({ content: `❌ Agent \`${agent2}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    await interaction.reply({ content: `❌ Agent \`${agent2}\` tidak ditemukan di database game VALORANT.`, flags: discord_js_1.MessageFlags.Ephemeral });
                     return;
                 }
                 if (agent3 && !validAgents.includes(agent3)) {
-                    await interaction.reply({ content: `❌ Agent \`${agent3}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    await interaction.reply({ content: `❌ Agent \`${agent3}\` tidak ditemukan di database game VALORANT.`, flags: discord_js_1.MessageFlags.Ephemeral });
                     return;
                 }
                 await User_1.User.findOneAndUpdate({ discordId: interaction.user.id }, {
@@ -177,7 +177,7 @@ exports.default = {
                 const lowerBio = bioText.toLowerCase();
                 for (const word of badWords) {
                     if (lowerBio.includes(word)) {
-                        await interaction.reply({ content: '❌ Bio kamu mengandung kata-kata tidak pantas! Tolong ganti dengan kata yang lebih baik 😊', ephemeral: true });
+                        await interaction.reply({ content: '❌ Bio kamu mengandung kata-kata tidak pantas! Tolong ganti dengan kata yang lebih baik 😊', flags: discord_js_1.MessageFlags.Ephemeral });
                         return;
                     }
                 }
@@ -198,10 +198,10 @@ exports.default = {
         catch (error) {
             console.error(error);
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: 'Ada kesalahan saat mengeksekusi command ini!', ephemeral: true });
+                await interaction.followUp({ content: 'Ada kesalahan saat mengeksekusi command ini!', flags: discord_js_1.MessageFlags.Ephemeral });
             }
             else {
-                await interaction.reply({ content: 'Ada kesalahan saat mengeksekusi command ini!', ephemeral: true });
+                await interaction.reply({ content: 'Ada kesalahan saat mengeksekusi command ini!', flags: discord_js_1.MessageFlags.Ephemeral });
             }
         }
     },

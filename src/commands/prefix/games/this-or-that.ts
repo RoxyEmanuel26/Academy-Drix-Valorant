@@ -17,7 +17,7 @@
  */
 
 
-import { Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, TextChannel } from 'discord.js';
+import { Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, TextChannel , MessageFlags } from 'discord.js';
 import { totQuestions } from '../../../commands/slash/games/this-or-that';
 
 export default {
@@ -65,7 +65,7 @@ export default {
                 votesB.add(i.user.id);
             }
 
-            await i.reply({ content: `Suara kamu masuk! Pilihan: ${i.customId === 'tot_a' ? item.a : item.b}`, ephemeral: true });
+            await i.reply({ content: `Suara kamu masuk! Pilihan: ${i.customId === 'tot_a' ? item.a : item.b}`, flags: MessageFlags.Ephemeral });
         });
 
         collector.on('end', async () => {
@@ -94,3 +94,4 @@ export default {
         });
     },
 };
+

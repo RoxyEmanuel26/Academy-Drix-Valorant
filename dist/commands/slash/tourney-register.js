@@ -33,13 +33,13 @@ exports.default = {
             return;
         const user = await User_1.User.findOne({ discordId: interaction.user.id });
         if (!user || !user.optIn)
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu wajib connect akun menggunakan `/link` sebelum ikut turnamen!')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu wajib connect akun menggunakan `/link` sebelum ikut turnamen!')], flags: discord_js_1.MessageFlags.Ephemeral });
         const tourney = await Tournament_1.Tournament.findOne({ guildId: interaction.guildId, status: 'upcoming' });
         if (!tourney)
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Tidak ada turnamen yang open registration saat ini.')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Tidak ada turnamen yang open registration saat ini.')], flags: discord_js_1.MessageFlags.Ephemeral });
         const teamName = interaction.options.getString('team', true);
         if (tourney.teams.some(t => t.name.toLowerCase() === teamName.toLowerCase() || t.captainId === interaction.user.id)) {
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu sudah terdaftar sebagai kapten tim atau nama tim sudah dipakai.')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu sudah terdaftar sebagai kapten tim atau nama tim sudah dipakai.')], flags: discord_js_1.MessageFlags.Ephemeral });
         }
         tourney.teams.push({ name: teamName, captainId: interaction.user.id, members: [interaction.user.id] });
         await tourney.save();

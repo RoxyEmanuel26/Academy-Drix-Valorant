@@ -30,6 +30,6 @@ exports.default = {
             return;
         const config = await GuildConfig_1.GuildConfig.findOne({ guildId: interaction.guildId });
         const embed = (0, embed_1.createFunEmbed)('⚙️ Konfigurasi Server', `**Prefix:** ${config?.prefix || '!'}\n**Leaderboard Channel:** ${config?.leaderboardChannelId ? `<#${config.leaderboardChannelId}>` : 'Belum di-set'}\n**Missions Active:** ${config?.missionsEnabled !== false ? 'Ya' : 'Tidak'}`);
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        await interaction.reply({ embeds: [embed], flags: discord_js_1.MessageFlags.Ephemeral });
     },
 };

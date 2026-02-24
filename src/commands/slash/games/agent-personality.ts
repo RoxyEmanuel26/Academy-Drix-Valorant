@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, TextChannel } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, TextChannel , MessageFlags } from 'discord.js';
 
 const questions = [
     {
@@ -98,7 +98,7 @@ export default {
         let currentQuestion = 0;
         let score: Record<string, number> = { duelist: 0, initiator: 0, sentinel: 0, controller: 0 };
 
-        await interaction.reply({ content: 'Memulai Personality Test...', ephemeral: true });
+        await interaction.reply({ content: 'Memulai Personality Test...', flags: MessageFlags.Ephemeral });
 
         // Since personality test takes a wizard format, we reply Ephemerally so we don't spam chat
         const sendQuestion = async (qIndex: number, updateInteraction: any) => {
@@ -165,3 +165,4 @@ export default {
         });
     },
 };
+

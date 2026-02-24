@@ -16,7 +16,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType , MessageFlags } from 'discord.js';
 import { featureFlags } from '../../../config/featureFlags';
 import { GamePoints } from '../../../database/models/GamePoints';
 import { detectRankFromRoles } from '../../../utils/rankDetector';
@@ -27,11 +27,11 @@ export default {
         .setDescription('Lihat daftar lengkap anggota server beserta rank dan poin mereka.'),
     async execute(interaction: ChatInputCommandInteraction) {
         if (!featureFlags.profile) {
-            return interaction.reply({ content: 'Fitur Profile sedang dinonaktifkan.', ephemeral: true });
+            return interaction.reply({ content: 'Fitur Profile sedang dinonaktifkan.', flags: MessageFlags.Ephemeral });
         }
 
         const guild = interaction.guild;
-        if (!guild) return interaction.reply({ content: 'Hanya bisa dipakai di server.', ephemeral: true });
+        if (!guild) return interaction.reply({ content: 'Hanya bisa dipakai di server.', flags: MessageFlags.Ephemeral });
 
         await interaction.deferReply();
 
@@ -111,7 +111,7 @@ export default {
 
                 collector.on('collect', async (i) => {
                     if (i.user.id !== interaction.user.id) {
-                        await i.reply({ content: 'Hanya pemanggil command yang bisa klik tombol ini.', ephemeral: true });
+                        await i.reply({ content: 'Hanya pemanggil command yang bisa klik tombol ini.', flags: MessageFlags.Ephemeral });
                         return;
                     }
 
@@ -140,3 +140,4 @@ export default {
         }
     },
 };
+

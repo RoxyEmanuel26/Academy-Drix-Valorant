@@ -16,7 +16,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
+import { Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType , MessageFlags } from 'discord.js';
 import { featureFlags } from '../../../config/featureFlags';
 import { GamePoints } from '../../../database/models/GamePoints';
 import { detectRankFromRoles } from '../../../utils/rankDetector';
@@ -111,7 +111,7 @@ export default {
 
                 collector.on('collect', async (i) => {
                     if (i.user.id !== message.author.id) {
-                        await i.reply({ content: 'Hanya pemanggil command yang bisa klik tombol ini.', ephemeral: true });
+                        await i.reply({ content: 'Hanya pemanggil command yang bisa klik tombol ini.', flags: MessageFlags.Ephemeral });
                         return;
                     }
 
@@ -140,3 +140,4 @@ export default {
         }
     },
 };
+

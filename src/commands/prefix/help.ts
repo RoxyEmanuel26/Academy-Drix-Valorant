@@ -17,7 +17,7 @@
  */
 
 
-import { Message, ActionRowBuilder, StringSelectMenuBuilder, ComponentType } from 'discord.js';
+import { Message, ActionRowBuilder, StringSelectMenuBuilder, ComponentType , MessageFlags } from 'discord.js';
 import { createFunEmbed } from '../../utils/embed';
 import { featureFlags } from '../../config/featureFlags';
 
@@ -54,7 +54,7 @@ export default {
 
         collector.on('collect', async i => {
             if (i.user.id !== message.author.id) {
-                await i.reply({ content: 'Ini menu help punya orang lain! Gunakan `!help` sendiri ya.', ephemeral: true });
+                await i.reply({ content: 'Ini menu help punya orang lain! Gunakan `!help` sendiri ya.', flags: MessageFlags.Ephemeral });
                 return;
             }
 
@@ -129,3 +129,4 @@ export default {
         });
     },
 };
+

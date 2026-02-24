@@ -28,10 +28,10 @@ exports.default = {
         .setDescription('Lihat statisik santai VALORANT kamu!'),
     async execute(interaction) {
         if (!(0, featureFlags_1.isFeatureEnabled)('valorantStats')) {
-            return interaction.reply({ content: 'Fitur statistik VALORANT sedang dinonaktifkan oleh admin. Nanti nyala lagi kok! ✨', ephemeral: true });
+            return interaction.reply({ content: 'Fitur statistik VALORANT sedang dinonaktifkan oleh admin. Nanti nyala lagi kok! ✨', flags: discord_js_1.MessageFlags.Ephemeral });
         }
         if (!env_1.env.riot.apiKey || !env_1.env.riot.rso.clientId || !env_1.env.riot.rso.clientSecret || !env_1.env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], ephemeral: true });
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], flags: discord_js_1.MessageFlags.Ephemeral });
         }
         await interaction.deferReply();
         const user = await User_1.User.findOne({ discordId: interaction.user.id });

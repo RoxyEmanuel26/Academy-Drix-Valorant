@@ -37,8 +37,8 @@ export default {
 
         const callerId = message.author.id;
         const now = Date.now();
-        if (cooldowns.has(callerId) && (now - cooldowns.get(callerId)!) < 15000) {
-            return message.reply('⏳ Sabar ya, cooldown command Profile adalah 15 detik!');
+        if (cooldowns.has(callerId) && (now - cooldowns.get(callerId)!) < 5000) {
+            return message.reply('⏳ Sabar ya, cooldown command Profile adalah 5 detik!');
         }
 
         const guild = message.guild;
@@ -96,7 +96,8 @@ export default {
                 inline: true
             });
 
-            const linkStatus = userDb?.optIn ? `✅ Terhubung (${userDb.riotGameName}#${userDb.riotTagLine})` : '❌ Belum Terhubung (`!link`)';
+            const riotTag = userDb?.riotTagLine ? `#${userDb.riotTagLine}` : '';
+            const linkStatus = userDb?.optIn ? `✅ Terhubung (${userDb.riotGameName}${riotTag})` : '❌ Belum Terhubung (`!link`)';
             embed.addFields({
                 name: '🎮 Riot Account',
                 value: linkStatus,
@@ -150,3 +151,4 @@ export default {
         }
     },
 };
+

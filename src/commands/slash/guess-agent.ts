@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, ComponentType, ButtonBuilder, ActionRowBuilder, ButtonStyle } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, ComponentType, ButtonBuilder, ActionRowBuilder, ButtonStyle , MessageFlags } from 'discord.js';
 import { createFunEmbed } from '../../utils/embed';
 
 export default {
@@ -51,7 +51,7 @@ export default {
 
         collector.on('collect', async i => {
             if (i.user.id !== interaction.user.id) {
-                await i.reply({ content: 'Ini bukan game tebakanmu!', ephemeral: true });
+                await i.reply({ content: 'Ini bukan game tebakanmu!', flags: MessageFlags.Ephemeral });
                 return;
             }
 
@@ -71,3 +71,4 @@ export default {
         });
     },
 };
+

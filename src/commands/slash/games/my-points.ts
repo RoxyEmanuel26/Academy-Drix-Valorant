@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder , MessageFlags } from 'discord.js';
 import { getUserStats, getUserRank } from '../../../services/gamePointsService';
 
 export default {
@@ -36,7 +36,7 @@ export default {
         const stats = await getUserStats(interaction.guildId, targetUser.id);
 
         if (!stats) {
-            await interaction.reply({ content: `**${targetUser.username}** belum pernah bermain Mini-Games di server ini.`, ephemeral: true });
+            await interaction.reply({ content: `**${targetUser.username}** belum pernah bermain Mini-Games di server ini.`, flags: MessageFlags.Ephemeral });
             return;
         }
 
@@ -70,3 +70,4 @@ export default {
         await interaction.reply({ embeds: [embed] });
     },
 };
+
