@@ -70,11 +70,16 @@ const loadCommands = async (client) => {
         try {
             console.log('Started refreshing application (/) commands.');
             if (env_1.env.discord.guildId) {
-                // Guild commands for faster testing
-                await rest.put(discord_js_1.Routes.applicationGuildCommands(env_1.env.discord.clientId, env_1.env.discord.guildId), { body: slashCommandsToRegister });
+                // Determine if we have multiple comma-separated guild IDs
+                const guildIds = env_1.env.discord.guildId.split(',').map(id => id.trim()).filter(id => id.length > 0);
+                for (const guildId of guildIds) {
+                    console.log(`Refreshing commands for Guild ID: ${guildId}`);
+                    await rest.put(discord_js_1.Routes.applicationGuildCommands(env_1.env.discord.clientId, guildId), { body: slashCommandsToRegister });
+                }
             }
             else {
                 // Global commands
+                console.log(`Refreshing global commands...`);
                 await rest.put(discord_js_1.Routes.applicationCommands(env_1.env.discord.clientId), { body: slashCommandsToRegister });
             }
             console.log('Successfully reloaded application (/) commands.');

@@ -30,8 +30,22 @@ exports.default = {
     async execute(client, message) {
         if (message.author.bot)
             return;
+        let config = null;
+        if (message.guildId) {
+            try {
+                config = await GuildConfig_1.GuildConfig.findOne({ guildId: message.guildId });
+                if (!config) {
+                    // Create default if not exist
+                    config = await GuildConfig_1.GuildConfig.create({ guildId: message.guildId, prefix: '!' });
+                }
+            }
+            catch (error) {
+                console.error('Failed to fetch/create GuildConfig:', error);
+            }
+        }
         // --- Auto Parse Introduction Rules ---
-        if (env_1.env.discord.introducingChannelId && message.channelId === env_1.env.discord.introducingChannelId) {
+        // Refactored to Phase 27 Database configs
+        if (config?.introducingChannelId && message.channelId === config.introducingChannelId) {
             await (0, introParser_1.parseIntroduction)(message);
             // Non-blocking, let it proceed in case they used a bot command there
         }

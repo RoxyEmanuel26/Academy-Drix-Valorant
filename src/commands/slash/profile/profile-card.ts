@@ -106,7 +106,7 @@ export default {
 
             embed.addFields({
                 name: '🏅 Rank saat ini',
-                value: `${emoji} **${rank}**\n*(Sumber: ${sourceStr})*`,
+                value: `${emoji} **${rank}**`,
                 inline: true
             });
 

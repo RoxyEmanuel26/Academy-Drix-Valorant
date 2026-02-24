@@ -10,7 +10,7 @@
  */
 
 import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionFlagsBits, TextChannel } from 'discord.js';
-import { env } from '../../config/env';
+import { GuildConfig } from '../../database/models/GuildConfig';
 import { parseIntroduction } from '../../utils/introParser';
 
 export default {
@@ -27,11 +27,16 @@ export default {
         ),
 
     async execute(interaction: ChatInputCommandInteraction) {
-        if (!env.discord.introducingChannelId) {
-            return interaction.reply({ content: '❌ `DISCORD_INTRODUCING_CHANNEL_ID` belum di-set di config/.env', ephemeral: true });
+        if (!interaction.guildId) return;
+
+        const config = await GuildConfig.findOne({ guildId: interaction.guildId });
+
+        if (!config?.introducingChannelId) {
+            await interaction.reply({ content: '❌ Fitur ini belum dikonfigurasi. Gunakan `/setup intro-channel` terlebih dahulu.', ephemeral: true });
+            return;
         }
 
-        const channel = interaction.guild?.channels.cache.get(env.discord.introducingChannelId) as TextChannel;
+        const channel = interaction.guild?.channels.cache.get(config.introducingChannelId) as TextChannel;
         if (!channel || !channel.isTextBased()) {
             return interaction.reply({ content: '❌ Channel Introducing tidak ditemukan atau bukan channel teks yang valid.', ephemeral: true });
         }

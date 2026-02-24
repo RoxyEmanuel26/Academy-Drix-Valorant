@@ -21,16 +21,16 @@ import { featureFlags, FeatureFlags } from '../config/featureFlags';
 import { IUser } from '../database/models/User';
 
 export const VALORANT_RANKS = [
-    { rank: 'Radiant', keywords: ['radiant'], color: 0xFFFCE0, emoji: '🌟', tier: 9 },
-    { rank: 'Immortal', keywords: ['immortal'], color: 0xBE3D6B, emoji: '💜', tier: 8 },
-    { rank: 'Ascendant', keywords: ['ascendant', 'asc'], color: 0x18A76B, emoji: '💚', tier: 7 },
-    { rank: 'Diamond', keywords: ['diamond', 'dia'], color: 0x6ACDDE, emoji: '💎', tier: 6 },
-    { rank: 'Platinum', keywords: ['platinum', 'plat'], color: 0x3BCBBF, emoji: '🩵', tier: 5 },
-    { rank: 'Gold', keywords: ['gold'], color: 0xFFD700, emoji: '🥇', tier: 4 },
-    { rank: 'Silver', keywords: ['silver', 'silv'], color: 0xC0C0C0, emoji: '🥈', tier: 3 },
-    { rank: 'Bronze', keywords: ['bronze', 'brnz'], color: 0xCD7F32, emoji: '🥉', tier: 2 },
-    { rank: 'Iron', keywords: ['iron'], color: 0x8E8E8E, emoji: '⚙️', tier: 1 },
-    { rank: 'Unranked', keywords: ['unranked', 'unrank', 'norank'], color: 0x4B4B4B, emoji: '❓', tier: 0 },
+    { rank: 'Radiant', keywords: ['radiant'], color: 0xFFFCE0, emoji: '<:radiant:1475926641652924489>', tier: 9 },
+    { rank: 'Immortal', keywords: ['immortal'], color: 0xBE3D6B, emoji: '<:immortal:1475926638150815794>', tier: 8 },
+    { rank: 'Ascendant', keywords: ['ascendant', 'asc'], color: 0x18A76B, emoji: '<:ascendant:1475926635034443890>', tier: 7 },
+    { rank: 'Diamond', keywords: ['diamond', 'dia'], color: 0x6ACDDE, emoji: '<:diamond:1475926631804567645>', tier: 6 },
+    { rank: 'Platinum', keywords: ['platinum', 'plat'], color: 0x3BCBBF, emoji: '<:platinum:1475926629057433743>', tier: 5 },
+    { rank: 'Gold', keywords: ['gold'], color: 0xFFD700, emoji: '<:gold:1475926625441943685>', tier: 4 },
+    { rank: 'Silver', keywords: ['silver', 'silv'], color: 0xC0C0C0, emoji: '<:silver:1475926622887481476>', tier: 3 },
+    { rank: 'Bronze', keywords: ['bronze', 'brnz'], color: 0xCD7F32, emoji: '<:bronze:1475926620199194667>', tier: 2 },
+    { rank: 'Iron', keywords: ['iron'], color: 0x8E8E8E, emoji: '<:iron:1475926617275629588>', tier: 1 },
+    { rank: 'Unranked', keywords: ['unranked', 'unrank', 'norank'], color: 0x4B4B4B, emoji: '<:loveheart:1475926648007299174>', tier: 0 },
 ];
 
 /**
@@ -61,7 +61,7 @@ export function detectRankFromRoles(
     // Default Fallback
     return {
         rank: 'Unranked',
-        emoji: '❓',
+        emoji: '<:loveheart:1475926648007299174>',
         color: 0x4B4B4B,
         tier: 0,
         roleId: null
@@ -96,7 +96,7 @@ export async function getMemberRank(
     // PRIORITY 3: Fallbacks
     return {
         rank: 'Unranked',
-        emoji: '❓',
+        emoji: '<:loveheart:1475926648007299174>',
         color: 0x4B4B4B,
         source: 'manual'
     };

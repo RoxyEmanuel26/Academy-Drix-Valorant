@@ -61,7 +61,9 @@ Buka file `config/.env` dan lengkapi detail berikut:
 **A. Kredensial Discord**
 - `DISCORD_TOKEN`: Token App Discord. (Dapatkan di [Discord Developer Portal](https://discord.com/developers/applications))
 - `DISCORD_CLIENT_ID`: ID Aplikasi dari bot Anda.
-- `DISCORD_GUILD_ID`: (Opsional) ID Server pengujian Anda. Digunakan agar *Slash Commands* diregistrasi lebih cepat.
+- `DISCORD_GUILD_ID`: (Opsional) ID Server pengujian Anda. Digunakan agar *Slash Commands* diregistrasi lebih cepat (Bisa diisi koma untuk banyak server sekaligus).
+
+> **Note:** Pengaturan Role dan Channel (seperti LFG dan Perkenalan) sekarang dikonfigurasikan langsung dari dalam Discord menggunakan command `/setup` tanpa perlu memodifikasi `.env` lagi.
 
 **B. Database**
 - `MONGO_URI`: Ekstensi database MongoDB Anda. Contoh tes lokal: `mongodb://127.0.0.1:27017/academy_drix_valorant`.

@@ -71,14 +71,21 @@ export const loadCommands = async (client: Client) => {
         const rest = new REST({ version: '10' }).setToken(env.discord.token);
         try {
             console.log('Started refreshing application (/) commands.');
+
             if (env.discord.guildId) {
-                // Guild commands for faster testing
-                await rest.put(
-                    Routes.applicationGuildCommands(env.discord.clientId, env.discord.guildId),
-                    { body: slashCommandsToRegister },
-                );
+                // Determine if we have multiple comma-separated guild IDs
+                const guildIds = env.discord.guildId.split(',').map(id => id.trim()).filter(id => id.length > 0);
+
+                for (const guildId of guildIds) {
+                    console.log(`Refreshing commands for Guild ID: ${guildId}`);
+                    await rest.put(
+                        Routes.applicationGuildCommands(env.discord.clientId, guildId),
+                        { body: slashCommandsToRegister },
+                    );
+                }
             } else {
                 // Global commands
+                console.log(`Refreshing global commands...`);
                 await rest.put(
                     Routes.applicationCommands(env.discord.clientId),
                     { body: slashCommandsToRegister },

@@ -54,9 +54,9 @@ const init = async () => {
         process.exit(1);
     }
 
-    // Connect to DB dynamically based on server ID
-    const dbName = env.discord.guildId ? `guild_${env.discord.guildId}` : 'academy_drix_global';
-    await connectDatabase(env.database.mongoUri, dbName);
+    // Set a global database namespace to utilize native Mongoose DB structures 
+    // relying on `guildId` inside Schemas to isolate data cleanly.
+    await connectDatabase(env.database.mongoUri, 'academy_drix_global');
 
     // Load Handlers
     await loadEvents(client);

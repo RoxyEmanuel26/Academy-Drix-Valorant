@@ -19,8 +19,8 @@
 
 import { Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
+import { GuildConfig } from '../../database/models/GuildConfig';
 import { createLfgEmbed } from '../../utils/embed';
-import { env } from '../../config/env';
 
 export default {
     name: 'lfp',
@@ -29,8 +29,10 @@ export default {
     async execute(message: Message, args: string[]) {
         if (!message.guildId) return;
 
-        if (env.discord.lfgChannelId && message.channelId !== env.discord.lfgChannelId) {
-            await message.reply(`Silakan cari party game di channel <#${env.discord.lfgChannelId}>`);
+        const config = await GuildConfig.findOne({ guildId: message.guildId });
+
+        if (config?.lfgChannelId && message.channelId !== config.lfgChannelId) {
+            await message.reply(`Silakan cari party game di channel <#${config.lfgChannelId}>`);
             return;
         }
 
@@ -74,7 +76,7 @@ export default {
             const embed = createLfgEmbed(mode, note, participants, voiceChannelId)
                 .setThumbnail(message.author.displayAvatarURL());
 
-            const roleMention = env.discord.valorantRoleId ? `<@&${env.discord.valorantRoleId}>` : '@here';
+            const roleMention = config?.valorantRoleId ? `<@&${config.valorantRoleId}>` : '@here';
 
             let replyId = '';
             if ('send' in message.channel) {

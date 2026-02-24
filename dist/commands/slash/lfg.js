@@ -19,8 +19,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const LfgPost_1 = require("../../database/models/LfgPost");
+const GuildConfig_1 = require("../../database/models/GuildConfig");
 const embed_1 = require("../../utils/embed");
-const env_1 = require("../../config/env");
 exports.default = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('lfg')
@@ -35,8 +35,9 @@ exports.default = {
     async execute(interaction) {
         if (!interaction.guildId)
             return;
-        if (env_1.env.discord.lfgChannelId && interaction.channelId !== env_1.env.discord.lfgChannelId) {
-            await interaction.reply({ content: `Silakan cari party game di channel <#${env_1.env.discord.lfgChannelId}>`, ephemeral: true });
+        const config = await GuildConfig_1.GuildConfig.findOne({ guildId: interaction.guildId });
+        if (config?.lfgChannelId && interaction.channelId !== config.lfgChannelId) {
+            await interaction.reply({ content: `Silakan cari party game di channel <#${config.lfgChannelId}>`, ephemeral: true });
             return;
         }
         const mode = interaction.options.getString('mode') || 'Unrated';
@@ -46,7 +47,7 @@ exports.default = {
         const participants = [interaction.user.id];
         const embed = (0, embed_1.createLfgEmbed)(mode, note, participants, voiceChannelId)
             .setThumbnail(interaction.user.displayAvatarURL());
-        const roleMention = env_1.env.discord.valorantRoleId ? `<@&${env_1.env.discord.valorantRoleId}>` : '@here';
+        const roleMention = config?.valorantRoleId ? `<@&${config.valorantRoleId}>` : '@here';
         const reply = await interaction.reply({ content: roleMention, embeds: [embed], fetchReply: true });
         await LfgPost_1.LfgPost.create({
             guildId: interaction.guildId,

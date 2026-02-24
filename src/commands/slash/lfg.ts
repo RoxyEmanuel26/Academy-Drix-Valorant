@@ -19,8 +19,8 @@
 
 import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
+import { GuildConfig } from '../../database/models/GuildConfig';
 import { createLfgEmbed } from '../../utils/embed';
-import { env } from '../../config/env';
 
 export default {
     data: new SlashCommandBuilder()
@@ -38,8 +38,10 @@ export default {
     async execute(interaction: ChatInputCommandInteraction) {
         if (!interaction.guildId) return;
 
-        if (env.discord.lfgChannelId && interaction.channelId !== env.discord.lfgChannelId) {
-            await interaction.reply({ content: `Silakan cari party game di channel <#${env.discord.lfgChannelId}>`, ephemeral: true });
+        const config = await GuildConfig.findOne({ guildId: interaction.guildId });
+
+        if (config?.lfgChannelId && interaction.channelId !== config.lfgChannelId) {
+            await interaction.reply({ content: `Silakan cari party game di channel <#${config.lfgChannelId}>`, ephemeral: true });
             return;
         }
 
@@ -53,7 +55,7 @@ export default {
         const embed = createLfgEmbed(mode, note, participants, voiceChannelId)
             .setThumbnail(interaction.user.displayAvatarURL());
 
-        const roleMention = env.discord.valorantRoleId ? `<@&${env.discord.valorantRoleId}>` : '@here';
+        const roleMention = config?.valorantRoleId ? `<@&${config.valorantRoleId}>` : '@here';
 
         const reply = await interaction.reply({ content: roleMention, embeds: [embed], fetchReply: true });
 

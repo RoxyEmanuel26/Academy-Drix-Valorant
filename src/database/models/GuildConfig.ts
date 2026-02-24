@@ -22,6 +22,9 @@ import { Schema, model, Document } from 'mongoose';
 export interface IGuildConfig extends Document {
     guildId: string;
     leaderboardChannelId?: string;
+    lfgChannelId?: string;
+    introducingChannelId?: string;
+    valorantRoleId?: string;
     prefix: string;
     missionsEnabled: boolean;
     rankRoleIds?: {
@@ -41,6 +44,9 @@ export interface IGuildConfig extends Document {
 const guildConfigSchema = new Schema<IGuildConfig>({
     guildId: { type: String, required: true, unique: true },
     leaderboardChannelId: { type: String },
+    lfgChannelId: { type: String },
+    introducingChannelId: { type: String },
+    valorantRoleId: { type: String },
     prefix: { type: String, default: '!' },
     missionsEnabled: { type: Boolean, default: true },
     rankRoleIds: {

@@ -19,8 +19,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const LfgPost_1 = require("../../database/models/LfgPost");
+const GuildConfig_1 = require("../../database/models/GuildConfig");
 const embed_1 = require("../../utils/embed");
-const env_1 = require("../../config/env");
 exports.default = {
     name: 'lfp',
     aliases: ['lfg', 'party', 'carimabar', 'mabar', 'valoyuk'],
@@ -28,8 +28,9 @@ exports.default = {
     async execute(message, args) {
         if (!message.guildId)
             return;
-        if (env_1.env.discord.lfgChannelId && message.channelId !== env_1.env.discord.lfgChannelId) {
-            await message.reply(`Silakan cari party game di channel <#${env_1.env.discord.lfgChannelId}>`);
+        const config = await GuildConfig_1.GuildConfig.findOne({ guildId: message.guildId });
+        if (config?.lfgChannelId && message.channelId !== config.lfgChannelId) {
+            await message.reply(`Silakan cari party game di channel <#${config.lfgChannelId}>`);
             return;
         }
         const note = args.join(' ') || 'Ayo main bareng!';
@@ -63,7 +64,7 @@ exports.default = {
             const voiceChannelId = member?.voice.channelId || undefined;
             const embed = (0, embed_1.createLfgEmbed)(mode, note, participants, voiceChannelId)
                 .setThumbnail(message.author.displayAvatarURL());
-            const roleMention = env_1.env.discord.valorantRoleId ? `<@&${env_1.env.discord.valorantRoleId}>` : '@here';
+            const roleMention = config?.valorantRoleId ? `<@&${config.valorantRoleId}>` : '@here';
             let replyId = '';
             if ('send' in message.channel) {
                 const reply = await message.channel.send({ content: roleMention, embeds: [embed] });
