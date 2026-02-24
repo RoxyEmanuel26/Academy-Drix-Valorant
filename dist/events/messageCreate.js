@@ -19,7 +19,7 @@ exports.default = {
             if (lfgPost) {
                 if (!lfgPost.active) {
                     if (lfgPost.isTimeout) {
-                        await message.reply('LU TELAT bro! Party ini udah kelamaan dan batal berangkat. 🗿');
+                        await message.reply('LU TELAT bro! Partynya udah bubarrr... kelamaan sii wkwkwkwk 🗿 mending bikin baru lagi');
                     }
                     else if (lfgPost.participants.length >= 5) {
                         await message.reply('Maaf, team ini udah penuh! 😔');
@@ -47,7 +47,7 @@ exports.default = {
                         .setStyle(discord_js_2.ButtonStyle.Danger));
                     if ('send' in message.channel) {
                         await message.channel.send({
-                            content: `<@${lfgPost.ownerId}> Party kamu udah berumur lebih dari ${env_1.env.bot.lfgTimeoutMinutes} menit nih, tapi ada <@${userId}> yang mau join. Masih mau main atau udahan?`,
+                            content: `<@${lfgPost.ownerId}> Partynya masi ada gak?, nih ada <@${userId}> yang mau join. Masih mau main atau udahan?`,
                             components: [row]
                         });
                     }
@@ -80,7 +80,7 @@ exports.default = {
                 if (lfgPost.participants.length === 5) {
                     const mentions = lfgPost.participants.map(id => `<@${id}>`).join(' ');
                     if ('send' in message.channel) {
-                        await message.channel.send(`Team penuh! Ayo berangkat 🚀\n${mentions}`);
+                        await message.channel.send(`Team penuh! Ayo GASS mabar 🚀\n${mentions}`);
                     }
                 }
                 else {

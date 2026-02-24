@@ -1,8 +1,28 @@
+/**
+ * ---------------------------------------------------------------------
+ * ⚡ WONDERPLAY - ACADEMY DRIX VALORANT BOT
+ * ---------------------------------------------------------------------
+ * @copyright (c) 2026 Roxy Emanuel - Soreang, West Java, Indonesia
+ * @author    Roxy Emanuel <https://github.com/RoxyEmanuel26>
+ * @link      https://github.com/RoxyEmanuel26/Academy-Drix-Valorant
+ * @community WonderPlay Discord: https://discord.gg/A6b3dT2eey
+ * 
+ * Bot Discord eksklusif untuk komunitas WonderPlay & Academy Drix Valorant.
+ * Hak cipta dilindungi undang-undang.
+ * 
+ * ⚠️ PERINGATAN EKSKLUSIVITAS:
+ * Dilarang keras melakukan modifikasi, distribusi, atau komersialisasi
+ * tanpa izin tertulis dari pemegang hak cipta.
+ * ---------------------------------------------------------------------
+ */
+
+
 import { Client, GatewayIntentBits, Partials, Collection } from 'discord.js';
 import dotenv from 'dotenv';
 import { connectDatabase } from './database/connection';
 import { loadEvents } from './utils/eventHandler';
 import { loadCommands } from './utils/commandHandler';
+import { startCronJobs } from './jobs/cronJobs';
 
 import { env } from './config/env';
 
@@ -44,6 +64,9 @@ const init = async () => {
     // Login
     if (env.discord.token) {
         await client.login(env.discord.token);
+
+        // Start Fun & Games Cron Jobs
+        startCronJobs(client);
     } else {
         console.warn('DISCORD_TOKEN is not provided. Bot will not connect to Discord.');
     }

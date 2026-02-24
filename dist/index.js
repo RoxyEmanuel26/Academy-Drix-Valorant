@@ -4,6 +4,7 @@ const discord_js_1 = require("discord.js");
 const connection_1 = require("./database/connection");
 const eventHandler_1 = require("./utils/eventHandler");
 const commandHandler_1 = require("./utils/commandHandler");
+const cronJobs_1 = require("./jobs/cronJobs");
 const env_1 = require("./config/env");
 const client = new discord_js_1.Client({
     intents: [
@@ -30,6 +31,8 @@ const init = async () => {
     // Login
     if (env_1.env.discord.token) {
         await client.login(env_1.env.discord.token);
+        // Start Fun & Games Cron Jobs
+        (0, cronJobs_1.startCronJobs)(client);
     }
     else {
         console.warn('DISCORD_TOKEN is not provided. Bot will not connect to Discord.');

@@ -1,3 +1,22 @@
+/**
+ * ---------------------------------------------------------------------
+ * ⚡ WONDERPLAY - ACADEMY DRIX VALORANT BOT
+ * ---------------------------------------------------------------------
+ * @copyright (c) 2026 Roxy Emanuel - Soreang, West Java, Indonesia
+ * @author    Roxy Emanuel <https://github.com/RoxyEmanuel26>
+ * @link      https://github.com/RoxyEmanuel26/Academy-Drix-Valorant
+ * @community WonderPlay Discord: https://discord.gg/A6b3dT2eey
+ * 
+ * Bot Discord eksklusif untuk komunitas WonderPlay & Academy Drix Valorant.
+ * Hak cipta dilindungi undang-undang.
+ * 
+ * ⚠️ PERINGATAN EKSKLUSIVITAS:
+ * Dilarang keras melakukan modifikasi, distribusi, atau komersialisasi
+ * tanpa izin tertulis dari pemegang hak cipta.
+ * ---------------------------------------------------------------------
+ */
+
+
 import { Events, Message } from 'discord.js';
 import { GuildConfig } from '../database/models/GuildConfig';
 import { LfgPost } from '../database/models/LfgPost';
@@ -19,7 +38,7 @@ export default {
             if (lfgPost) {
                 if (!lfgPost.active) {
                     if (lfgPost.isTimeout) {
-                        await message.reply('LU TELAT bro! Party ini udah kelamaan dan batal berangkat. 🗿');
+                        await message.reply('LU TELAT bro! Partynya udah bubarrr... kelamaan sii wkwkwkwk 🗿 mending bikin baru lagi');
                     } else if (lfgPost.participants.length >= 5) {
                         await message.reply('Maaf, team ini udah penuh! 😔');
                     }
@@ -54,7 +73,7 @@ export default {
 
                     if ('send' in message.channel) {
                         await message.channel.send({
-                            content: `<@${lfgPost.ownerId}> Party kamu udah berumur lebih dari ${env.bot.lfgTimeoutMinutes} menit nih, tapi ada <@${userId}> yang mau join. Masih mau main atau udahan?`,
+                            content: `<@${lfgPost.ownerId}> Partynya masi ada gak?, nih ada <@${userId}> yang mau join. Masih mau main atau udahan?`,
                             components: [row]
                         });
                     }
@@ -93,7 +112,7 @@ export default {
                 if (lfgPost.participants.length === 5) {
                     const mentions = lfgPost.participants.map(id => `<@${id}>`).join(' ');
                     if ('send' in message.channel) {
-                        await message.channel.send(`Team penuh! Ayo berangkat 🚀\n${mentions}`);
+                        await message.channel.send(`Team penuh! Ayo GASS mabar 🚀\n${mentions}`);
                     }
                 } else {
                     await message.reply('Berhasil join team! 🎉');

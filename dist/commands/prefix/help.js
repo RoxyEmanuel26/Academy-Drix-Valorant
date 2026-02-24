@@ -66,15 +66,15 @@ exports.default = {
                     break;
                 case 'fun':
                     newEmbed.setTitle('🎲 Fun & Games')
-                        .setDescription('`/guess-agent` atau `!guess-agent` - Tebak Agent\n`/agent-roulette` atau `!agent-roulette` - Spin Agent Random');
+                        .setDescription('**🔥 Mini-Games Berhadiah Poin:**\n`/guess-map` atau `!guess-map` - Tebak Map Valorant\n`/valorant-quiz` atau `!quiz` - Kuis pilihan ganda VALORANT\n`/emoji-agent` atau `!emoji-agent` - Tebak Agent dari 3 Emoji\n`/scramble` atau `!scramble` - Susun huruf acak nama Map/Agent\n`/daily-challenge` atau `!daily` - Tantangan harian (Multiplier & Streak Bonus)\n\n**✨ Casual Games (No Points):**\n`/would-you-rather` atau `!wyr` - Polling skenario ekstrim\n`/this-or-that` atau `!tot` - Polling cepat 30 detik\n`/agent-personality` atau `!personality` - Tes kecocokan agent\n\n**🏆 Ekonomi Poin:**\n`/my-points` atau `!my-points` - Cek stats & rank kamu\n`/leaderboard-games` atau `!lb` - Klasemen Top 10 Server\n`/admin-points` atau `!admin-points` - (Admin Only) Modifikasi Poin');
                     break;
                 case 'missions':
                     newEmbed.setTitle('🎯 Missions')
                         .setDescription('`/missions` atau `!missions` - Lihat misi aktif harian/mingguan');
                     break;
                 case 'lfg':
-                    newEmbed.setTitle('🎮 Looking For Group')
-                        .setDescription('`/lfg` atau `!lfg` - Cari teman mabar\n`/lfg-close` atau `!lfg-close` - Tutup post LFG');
+                    newEmbed.setTitle('🎮 Looking For Party (LFP)')
+                        .setDescription('`/lfp` atau `!lfp` (alias: `!party`, `!mabar`) - Cari teman mabar\n`/lfp-close` atau `!lfp-close` - Tutup post LFP');
                     break;
                 case 'tournaments':
                     newEmbed.setTitle('🚩 Tournaments')

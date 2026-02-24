@@ -1,0 +1,76 @@
+﻿src/commands/prefix/games/emoji-agent.ts(29,31): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/emoji-agent.ts(33,43): error TS2339: Property 'createMessageCollector' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'createMessageCollector' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/emoji-agent.ts(37,40): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/commands/prefix/games/emoji-agent.ts(74,43): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/emoji-agent.ts(77,43): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/emoji-agent.ts(89,33): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/guess-map.ts(29,31): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/guess-map.ts(33,43): error TS2339: Property 'createMessageCollector' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'createMessageCollector' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/guess-map.ts(37,40): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/commands/prefix/games/guess-map.ts(74,43): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/guess-map.ts(77,43): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/guess-map.ts(89,33): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/scramble.ts(33,40): error TS2551: Property 'map' does not exist on type '{ agents: string[]; maps: string[]; }'. Did you mean 'maps'?
+src/commands/prefix/games/scramble.ts(46,51): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/scramble.ts(50,43): error TS2339: Property 'createMessageCollector' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'createMessageCollector' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/scramble.ts(63,40): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/commands/prefix/games/scramble.ts(101,43): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/scramble.ts(104,43): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/scramble.ts(117,33): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/valorant-quiz.ts(63,51): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/valorant-quiz.ts(73,40): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/commands/prefix/games/valorant-quiz.ts(158,33): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/would-you-rather.ts(28,51): error TS2339: Property 'send' does not exist on type 'DMChannel | PartialDMChannel | PartialGroupDMChannel | NewsChannel | StageChannel | TextChannel | PublicThreadChannel<...> | PrivateThreadChannel | VoiceChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/prefix/games/would-you-rather.ts(38,40): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/commands/slash/games/emoji-agent.ts(33,47): error TS2339: Property 'createMessageCollector' does not exist on type 'TextBasedChannel'.
+  Property 'createMessageCollector' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/emoji-agent.ts(37,40): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/commands/slash/games/emoji-agent.ts(74,48): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/emoji-agent.ts(77,48): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/emoji-agent.ts(89,38): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/guess-map.ts(34,47): error TS2339: Property 'createMessageCollector' does not exist on type 'TextBasedChannel'.
+  Property 'createMessageCollector' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/guess-map.ts(38,40): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/commands/slash/games/guess-map.ts(75,48): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/guess-map.ts(78,48): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/guess-map.ts(90,38): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/scramble.ts(34,40): error TS2551: Property 'map' does not exist on type '{ agents: string[]; maps: string[]; }'. Did you mean 'maps'?
+src/commands/slash/games/scramble.ts(51,47): error TS2339: Property 'createMessageCollector' does not exist on type 'TextBasedChannel'.
+  Property 'createMessageCollector' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/scramble.ts(64,40): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/commands/slash/games/scramble.ts(102,48): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/scramble.ts(105,48): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/scramble.ts(118,38): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.
+src/commands/slash/games/valorant-quiz.ts(124,36): error TS2339: Property 'custom_id' does not exist on type 'Partial<APIButtonComponent>'.
+  Property 'custom_id' does not exist on type 'Partial<APIButtonComponentWithSKUId>'.
+src/commands/slash/games/valorant-quiz.ts(147,32): error TS2339: Property 'custom_id' does not exist on type 'Partial<APIButtonComponent>'.
+  Property 'custom_id' does not exist on type 'Partial<APIButtonComponentWithSKUId>'.
+src/commands/slash/games/valorant-quiz.ts(158,38): error TS2339: Property 'send' does not exist on type 'TextBasedChannel'.
+  Property 'send' does not exist on type 'PartialGroupDMChannel'.

@@ -10,14 +10,14 @@ Bot Discord berbasis Node.js & TypeScript yang diciptakan khusus untuk komunitas
   Sinkronisasi akun game pengguna secara aman via OAuth2, 100% mematuhi *Riot Games Policy*. Tidak pernah meminta password!
 - **📊 Personal Stats Tracker**
   Pantau rank dan persentase kemenangan (Winrate) dari pertarungan terakhirmu.
-- **🏆 Server Leaderboard**
-  Adu mekanik secara sehat di dalam server komunitasmu dengan Leaderboard berbasis Winrate/Rank.
+- **🏆 Poin Ekonomi & Leaderboard Global**
+  Adu mekanik secara sehat dengan Leaderboard berbasis In-Game Stats atau Leaderboard Minigames! Setiap user punya profil poin pribadi.
 - **🎯 Sistem Misi Harian & Mingguan**
   Selesaikan misi seru langsung dari Discord untuk mendapatkan *Badge* atau pengakuan di server.
-- **🎲 Game Santai (Minigames)**
-  Lagi bosan nunggu antrean server? Main *Tebak Agent* atau biarkan bot yang memilih *Agent Roulette* untuk match-mu.
-- **🎮 Looking For Group (LFG)**
-  Cari teman party (Competitive / Unrated) secara praktis dan tertata langsung di satu channel.
+- **🎲 Ekosistem Fun & Games Interaktif**
+  Tersedia puluhan Minigames (Tebak Map, Emoji Agent, Susun Kata / Scramble, dan Kuis VALORANT) berhadiah poin, plus *Daily Challenges* (multiplier rewards) & *Polling/Personality Tests* kasual (This or That, Would you Rather).
+- **🎮 Looking For Party (LFP)**
+  Cari teman party (Competitive / Unrated) secara praktis dan tertata langsung di satu channel. LFP otomatis lock dan mendeteksi ketersediaan Voice Channel si pembuat!
 - **🚩 Turnamen Komunitas Internal**
   Sistem pendaftaran dan pembuatan bracket minim (khusus administrasi turnamen santai).
 - **💡 Helper Interaktif (`/help` & `!help`)**
