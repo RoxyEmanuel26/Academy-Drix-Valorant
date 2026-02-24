@@ -1,4 +1,21 @@
 "use strict";
+/**
+ * ---------------------------------------------------------------------
+ * ⚡ WONDERPLAY - ACADEMY DRIX VALORANT BOT
+ * ---------------------------------------------------------------------
+ * @copyright (c) 2026 Roxy Emanuel - Soreang, West Java, Indonesia
+ * @author    Roxy Emanuel <https://github.com/RoxyEmanuel26>
+ * @link      https://github.com/RoxyEmanuel26/Academy-Drix-Valorant
+ * @community WonderPlay Discord: https://discord.gg/A6b3dT2eey
+ *
+ * Bot Discord eksklusif untuk komunitas WonderPlay & Academy Drix Valorant.
+ * Hak cipta dilindungi undang-undang.
+ *
+ * ⚠️ PERINGATAN EKSKLUSIVITAS:
+ * Dilarang keras melakukan modifikasi, distribusi, atau komersialisasi
+ * tanpa izin tertulis dari pemegang hak cipta.
+ * ---------------------------------------------------------------------
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const embed_1 = require("../../utils/embed");
@@ -16,6 +33,7 @@ exports.default = {
             { label: 'Account & Linking', value: 'account', emoji: '🔗' },
             { label: 'Personal Stats', value: 'stats', emoji: '📊' },
             { label: 'Leaderboards', value: 'leaderboard', emoji: '🏆' },
+            { label: 'Profil & Personalisasi', value: 'profile', emoji: '👤' },
             { label: 'Fun & Games', value: 'fun', emoji: '🎲' },
             { label: 'Missions', value: 'missions', emoji: '🎯' },
             { label: 'LFG', value: 'lfg', emoji: '🎮' },
@@ -64,6 +82,10 @@ exports.default = {
                             .setDescription('`/leaderboard` atau `!leaderboard <type>` - Lihat ranking server');
                     }
                     break;
+                case 'profile':
+                    newEmbed.setTitle('👤 Profil & Personalisasi')
+                        .setDescription('`/profile-card` atau `!profile` - Tampilkan statistik text profil Valorant\n`/card` atau `!card` - Tampilkan Graphic ID Card (KTP) kamu\n`/set-main-agent` atau `!set-agent` - Set 3 agent andalan\n`/set-bio` atau `!set-bio` - Tulis bio pendek di profil\n`/rank-role-claim` atau `!rank-claim` - Klaim role discord sesuai rank\n`/server-roster` atau `!roster` - Lihat kolektif anggota server & poin');
+                    break;
                 case 'fun':
                     newEmbed.setTitle('🎲 Fun & Games')
                         .setDescription('**🔥 Mini-Games Berhadiah Poin:**\n`/guess-map` atau `!guess-map` - Tebak Map Valorant\n`/valorant-quiz` atau `!quiz` - Kuis pilihan ganda VALORANT\n`/emoji-agent` atau `!emoji-agent` - Tebak Agent dari 3 Emoji\n`/scramble` atau `!scramble` - Susun huruf acak nama Map/Agent\n`/daily-challenge` atau `!daily` - Tantangan harian (Multiplier & Streak Bonus)\n\n**✨ Casual Games (No Points):**\n`/would-you-rather` atau `!wyr` - Polling skenario ekstrim\n`/this-or-that` atau `!tot` - Polling cepat 30 detik\n`/agent-personality` atau `!personality` - Tes kecocokan agent\n\n**🏆 Ekonomi Poin:**\n`/my-points` atau `!my-points` - Cek stats & rank kamu\n`/leaderboard-games` atau `!lb` - Klasemen Top 10 Server\n`/admin-points` atau `!admin-points` - (Admin Only) Modifikasi Poin');
@@ -92,7 +114,7 @@ exports.default = {
                     break;
                 case 'admin':
                     newEmbed.setTitle('⚙️ Admin Config')
-                        .setDescription('`/config` atau `!config` - Settings Server\n`/set-leaderboard-channel` - Set channel LB');
+                        .setDescription('`/config` atau `!config` - Settings Server\n`/set-leaderboard-channel` - Set channel LB\n`/admin-profile` atau `!admin-profile` - Moderasi profile member\n`/show-rank-roles` atau `!show-rank-roles` - Cek roles Rank');
                     break;
             }
             await i.update({ embeds: [newEmbed], components: [row] });

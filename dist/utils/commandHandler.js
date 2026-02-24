@@ -1,4 +1,21 @@
 "use strict";
+/**
+ * ---------------------------------------------------------------------
+ * ⚡ WONDERPLAY - ACADEMY DRIX VALORANT BOT
+ * ---------------------------------------------------------------------
+ * @copyright (c) 2026 Roxy Emanuel - Soreang, West Java, Indonesia
+ * @author    Roxy Emanuel <https://github.com/RoxyEmanuel26>
+ * @link      https://github.com/RoxyEmanuel26/Academy-Drix-Valorant
+ * @community WonderPlay Discord: https://discord.gg/A6b3dT2eey
+ *
+ * Bot Discord eksklusif untuk komunitas WonderPlay & Academy Drix Valorant.
+ * Hak cipta dilindungi undang-undang.
+ *
+ * ⚠️ PERINGATAN EKSKLUSIVITAS:
+ * Dilarang keras melakukan modifikasi, distribusi, atau komersialisasi
+ * tanpa izin tertulis dari pemegang hak cipta.
+ * ---------------------------------------------------------------------
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10,12 +27,26 @@ const path_1 = __importDefault(require("path"));
 const env_1 = require("../config/env");
 const loadCommands = async (client) => {
     const slashCommandsToRegister = [];
+    // Helper function to recursively get all files
+    const getAllFiles = (dirPath, arrayOfFiles = []) => {
+        const files = fs_1.default.readdirSync(dirPath);
+        files.forEach(file => {
+            const absolutePath = path_1.default.join(dirPath, file);
+            if (fs_1.default.statSync(absolutePath).isDirectory()) {
+                arrayOfFiles = getAllFiles(absolutePath, arrayOfFiles);
+            }
+            else if (file.endsWith('.ts') || file.endsWith('.js')) {
+                arrayOfFiles.push(absolutePath);
+            }
+        });
+        return arrayOfFiles;
+    };
     // Load Slash Commands
     const slashPath = path_1.default.join(__dirname, '../commands/slash');
     if (fs_1.default.existsSync(slashPath)) {
-        const commandFiles = fs_1.default.readdirSync(slashPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
+        const commandFiles = getAllFiles(slashPath);
         for (const file of commandFiles) {
-            const command = require(`../commands/slash/${file}`).default;
+            const command = require(file).default;
             if (command?.data && command?.execute) {
                 client.slashCommands.set(command.data.name, command);
                 slashCommandsToRegister.push(command.data.toJSON());
@@ -25,9 +56,9 @@ const loadCommands = async (client) => {
     // Load Prefix Commands
     const prefixPath = path_1.default.join(__dirname, '../commands/prefix');
     if (fs_1.default.existsSync(prefixPath)) {
-        const commandFiles = fs_1.default.readdirSync(prefixPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
+        const commandFiles = getAllFiles(prefixPath);
         for (const file of commandFiles) {
-            const command = require(`../commands/prefix/${file}`).default;
+            const command = require(file).default;
             if (command?.name && command?.execute) {
                 client.prefixCommands.set(command.name, command);
             }

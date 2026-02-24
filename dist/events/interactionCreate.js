@@ -1,8 +1,30 @@
 "use strict";
+/**
+ * ---------------------------------------------------------------------
+ * ⚡ WONDERPLAY - ACADEMY DRIX VALORANT BOT
+ * ---------------------------------------------------------------------
+ * @copyright (c) 2026 Roxy Emanuel - Soreang, West Java, Indonesia
+ * @author    Roxy Emanuel <https://github.com/RoxyEmanuel26>
+ * @link      https://github.com/RoxyEmanuel26/Academy-Drix-Valorant
+ * @community WonderPlay Discord: https://discord.gg/A6b3dT2eey
+ *
+ * Bot Discord eksklusif untuk komunitas WonderPlay & Academy Drix Valorant.
+ * Hak cipta dilindungi undang-undang.
+ *
+ * ⚠️ PERINGATAN EKSKLUSIVITAS:
+ * Dilarang keras melakukan modifikasi, distribusi, atau komersialisasi
+ * tanpa izin tertulis dari pemegang hak cipta.
+ * ---------------------------------------------------------------------
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
+const User_1 = require("../database/models/User");
 const LfgPost_1 = require("../database/models/LfgPost");
 const embed_1 = require("../utils/embed");
+const valorant_1 = require("../data/valorant");
+function sanitizeAgent(name) {
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+}
 exports.default = {
     name: discord_js_1.Events.InteractionCreate,
     once: false,
@@ -73,7 +95,7 @@ exports.default = {
                         }
                         await interaction.reply({ content: replyText, ephemeral: false });
                         if (autoJoined && lfgPost.participants.length === 5) {
-                            const mentions = lfgPost.participants.map(id => `<@${id}>`).join(' ');
+                            const mentions = lfgPost.participants.map((id) => `<@${id}>`).join(' ');
                             if (interaction.channel && 'send' in interaction.channel) {
                                 await interaction.channel.send(`Team penuh! Ayo berangkat 🚀\n${mentions}`);
                             }
@@ -106,7 +128,65 @@ exports.default = {
                 return;
             }
         }
-        // ---------------------------------
+        // --- Modal Submit Logic ---
+        if (interaction.isModalSubmit()) {
+            if (interaction.customId === 'modal_set_main_agent') {
+                const agent1Raw = interaction.fields.getTextInputValue('agent_1');
+                const agent2Raw = interaction.fields.getTextInputValue('agent_2') || '';
+                const agent3Raw = interaction.fields.getTextInputValue('agent_3') || '';
+                const agent1 = sanitizeAgent(agent1Raw);
+                const agent2 = agent2Raw ? sanitizeAgent(agent2Raw) : '';
+                const agent3 = agent3Raw ? sanitizeAgent(agent3Raw) : '';
+                const validAgents = Object.keys(valorant_1.agentEmojiHints);
+                if (!validAgents.includes(agent1)) {
+                    await interaction.reply({ content: `❌ Agent \`${agent1}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    return;
+                }
+                if (agent2 && !validAgents.includes(agent2)) {
+                    await interaction.reply({ content: `❌ Agent \`${agent2}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    return;
+                }
+                if (agent3 && !validAgents.includes(agent3)) {
+                    await interaction.reply({ content: `❌ Agent \`${agent3}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    return;
+                }
+                await User_1.User.findOneAndUpdate({ discordId: interaction.user.id }, {
+                    mainAgent: agent1,
+                    mainAgent2: agent2 || undefined,
+                    mainAgent3: agent3 || undefined
+                }, { upsert: true, new: true });
+                const getEmoji = (name) => valorant_1.agentEmojiHints[name] ? valorant_1.agentEmojiHints[name][0] : '';
+                const lines = [];
+                lines.push(`🥇 Main    : **${agent1}** ${getEmoji(agent1)}`);
+                if (agent2)
+                    lines.push(`🥈 Second  : **${agent2}** ${getEmoji(agent2)}`);
+                else
+                    lines.push(`🥈 Second  : *-*`);
+                if (agent3)
+                    lines.push(`🥉 Third   : **${agent3}** ${getEmoji(agent3)}`);
+                else
+                    lines.push(`🥉 Third   : *-*`);
+                const embed = (0, embed_1.createFunEmbed)('✅ Main Agent Kamu Updated!', `━━━━━━━━━━━━━━━━━━━━━━\n${lines.join('\n')}\n━━━━━━━━━━━━━━━━━━━━━━\nSekarang semua orang tau kamu ${agent1} main sejati! 🔪`);
+                await interaction.reply({ embeds: [embed] });
+                return;
+            }
+            if (interaction.customId === 'modal_set_bio') {
+                let bioText = interaction.fields.getTextInputValue('bio_text').trim();
+                bioText = bioText.replace(/https?:\/\/\S+/gi, '[Link Removed]');
+                const badWords = ['anjing', 'babi', 'kontol', 'memek', 'ngentot', 'bangsat', 'fuck', 'shit', 'bitch'];
+                const lowerBio = bioText.toLowerCase();
+                for (const word of badWords) {
+                    if (lowerBio.includes(word)) {
+                        await interaction.reply({ content: '❌ Bio kamu mengandung kata-kata tidak pantas! Tolong ganti dengan kata yang lebih baik 😊', ephemeral: true });
+                        return;
+                    }
+                }
+                await User_1.User.findOneAndUpdate({ discordId: interaction.user.id }, { bio: bioText }, { upsert: true, new: true });
+                const embed = (0, embed_1.createFunEmbed)('✅ Bio Kamu Tersimpan!', `━━━━━━━━━━━━━━━━━━━━━━\n📝 Bio baru kamu:\n*"${bioText}"*\n━━━━━━━━━━━━━━━━━━━━━━\nBio ini akan tampil secara permanen di profile card kamu!`);
+                await interaction.reply({ embeds: [embed] });
+                return;
+            }
+        }
         if (!interaction.isChatInputCommand())
             return;
         const command = client.slashCommands.get(interaction.commandName);

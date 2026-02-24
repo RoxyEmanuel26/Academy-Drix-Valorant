@@ -29,10 +29,10 @@ export const startCronJobs = (client: any) => {
         } catch (error) {
             console.error('❌ Failed to reset weekly points:', error);
         }
-    });
+    }, { timezone: "Asia/Jakarta" });
 
     // Reset monthly points every 1st day of the month at 00:00 WIB (UTC+7, which is 17:00 UTC previous day)
-    cron.schedule('0 17 L * *', async () => {
+    cron.schedule('0 17 * * *', async () => {
         // Using L might be problematic depending on the cron library, another way:
         // Let's run at 0 17 on the LAST day of the current month.
         // Wait, standard node-cron doesn't support L. 
@@ -49,19 +49,17 @@ export const startCronJobs = (client: any) => {
                 console.error('❌ Failed to reset monthly points:', error);
             }
         }
-    });
+    }, { timezone: "Asia/Jakarta" });
 
     // Post daily challenge every day at 09:00 WIB (UTC+7 => 02:00 UTC)
     cron.schedule('0 2 * * *', async () => {
         // We will implement `postDailyChallengeAllGuilds(client)` here later
         console.log('✅ Daily challenge trigger activated.');
-    });
+    }, { timezone: "Asia/Jakarta" });
 
     // Post weekly leaderboard recap every Monday at 08:00 WIB (UTC+7 => 01:00 UTC)
     cron.schedule('0 1 * * 1', async () => {
         // We will implement `postWeeklyLeaderboardRecap(client)` here later
         console.log('✅ Weekly leaderboard recap trigger activated.');
-    });
-
-    console.log('⏰ Fun & Games Cron Jobs have been started.');
+    }, { timezone: "Asia/Jakarta" });
 };

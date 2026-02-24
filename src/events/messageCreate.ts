@@ -23,12 +23,19 @@ import { LfgPost } from '../database/models/LfgPost';
 import { createLfgEmbed } from '../utils/embed';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { env } from '../config/env';
+import { parseIntroduction } from '../utils/introParser';
 
 export default {
     name: Events.MessageCreate,
     once: false,
     async execute(client: any, message: Message) {
         if (message.author.bot) return;
+
+        // --- Auto Parse Introduction Rules ---
+        if (env.discord.introducingChannelId && message.channelId === env.discord.introducingChannelId) {
+            await parseIntroduction(message);
+            // Non-blocking, let it proceed in case they used a bot command there
+        }
 
         // --- LFG Reply-to-Join Logic ---
         if (message.reference && message.reference.messageId) {

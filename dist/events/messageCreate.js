@@ -1,4 +1,21 @@
 "use strict";
+/**
+ * ---------------------------------------------------------------------
+ * ⚡ WONDERPLAY - ACADEMY DRIX VALORANT BOT
+ * ---------------------------------------------------------------------
+ * @copyright (c) 2026 Roxy Emanuel - Soreang, West Java, Indonesia
+ * @author    Roxy Emanuel <https://github.com/RoxyEmanuel26>
+ * @link      https://github.com/RoxyEmanuel26/Academy-Drix-Valorant
+ * @community WonderPlay Discord: https://discord.gg/A6b3dT2eey
+ *
+ * Bot Discord eksklusif untuk komunitas WonderPlay & Academy Drix Valorant.
+ * Hak cipta dilindungi undang-undang.
+ *
+ * ⚠️ PERINGATAN EKSKLUSIVITAS:
+ * Dilarang keras melakukan modifikasi, distribusi, atau komersialisasi
+ * tanpa izin tertulis dari pemegang hak cipta.
+ * ---------------------------------------------------------------------
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const GuildConfig_1 = require("../database/models/GuildConfig");
@@ -6,12 +23,18 @@ const LfgPost_1 = require("../database/models/LfgPost");
 const embed_1 = require("../utils/embed");
 const discord_js_2 = require("discord.js");
 const env_1 = require("../config/env");
+const introParser_1 = require("../utils/introParser");
 exports.default = {
     name: discord_js_1.Events.MessageCreate,
     once: false,
     async execute(client, message) {
         if (message.author.bot)
             return;
+        // --- Auto Parse Introduction Rules ---
+        if (env_1.env.discord.introducingChannelId && message.channelId === env_1.env.discord.introducingChannelId) {
+            await (0, introParser_1.parseIntroduction)(message);
+            // Non-blocking, let it proceed in case they used a bot command there
+        }
         // --- LFG Reply-to-Join Logic ---
         if (message.reference && message.reference.messageId) {
             // Find LFG even if inactive so we can reject late-comers

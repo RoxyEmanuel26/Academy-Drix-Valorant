@@ -1,4 +1,21 @@
 "use strict";
+/**
+ * ---------------------------------------------------------------------
+ * ⚡ WONDERPLAY - ACADEMY DRIX VALORANT BOT
+ * ---------------------------------------------------------------------
+ * @copyright (c) 2026 Roxy Emanuel - Soreang, West Java, Indonesia
+ * @author    Roxy Emanuel <https://github.com/RoxyEmanuel26>
+ * @link      https://github.com/RoxyEmanuel26/Academy-Drix-Valorant
+ * @community WonderPlay Discord: https://discord.gg/A6b3dT2eey
+ *
+ * Bot Discord eksklusif untuk komunitas WonderPlay & Academy Drix Valorant.
+ * Hak cipta dilindungi undang-undang.
+ *
+ * ⚠️ PERINGATAN EKSKLUSIVITAS:
+ * Dilarang keras melakukan modifikasi, distribusi, atau komersialisasi
+ * tanpa izin tertulis dari pemegang hak cipta.
+ * ---------------------------------------------------------------------
+ */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -15,6 +32,7 @@ exports.env = {
         guildId: process.env.DISCORD_GUILD_ID || '',
         valorantRoleId: process.env.DISCORD_VALORANT_ROLE_ID || '',
         lfgChannelId: process.env.DISCORD_LFG_CHANNEL_ID || '',
+        introducingChannelId: process.env.DISCORD_INTRODUCING_CHANNEL_ID || '',
     },
     bot: {
         lfgTimeoutMinutes: parseInt(process.env.LFG_TIMEOUT_MINUTES || '60', 10),

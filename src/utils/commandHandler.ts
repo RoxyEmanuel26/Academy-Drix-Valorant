@@ -25,12 +25,28 @@ import { env } from '../config/env';
 export const loadCommands = async (client: Client) => {
     const slashCommandsToRegister: any[] = [];
 
+    // Helper function to recursively get all files
+    const getAllFiles = (dirPath: string, arrayOfFiles: string[] = []) => {
+        const files = fs.readdirSync(dirPath);
+
+        files.forEach(file => {
+            const absolutePath = path.join(dirPath, file);
+            if (fs.statSync(absolutePath).isDirectory()) {
+                arrayOfFiles = getAllFiles(absolutePath, arrayOfFiles);
+            } else if (file.endsWith('.ts') || file.endsWith('.js')) {
+                arrayOfFiles.push(absolutePath);
+            }
+        });
+
+        return arrayOfFiles;
+    };
+
     // Load Slash Commands
     const slashPath = path.join(__dirname, '../commands/slash');
     if (fs.existsSync(slashPath)) {
-        const commandFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
+        const commandFiles = getAllFiles(slashPath);
         for (const file of commandFiles) {
-            const command = require(`../commands/slash/${file}`).default;
+            const command = require(file).default;
             if (command?.data && command?.execute) {
                 client.slashCommands.set(command.data.name, command);
                 slashCommandsToRegister.push(command.data.toJSON());
@@ -41,9 +57,9 @@ export const loadCommands = async (client: Client) => {
     // Load Prefix Commands
     const prefixPath = path.join(__dirname, '../commands/prefix');
     if (fs.existsSync(prefixPath)) {
-        const commandFiles = fs.readdirSync(prefixPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
+        const commandFiles = getAllFiles(prefixPath);
         for (const file of commandFiles) {
-            const command = require(`../commands/prefix/${file}`).default;
+            const command = require(file).default;
             if (command?.name && command?.execute) {
                 client.prefixCommands.set(command.name, command);
             }

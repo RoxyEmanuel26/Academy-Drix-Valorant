@@ -24,6 +24,18 @@ export interface IGuildConfig extends Document {
     leaderboardChannelId?: string;
     prefix: string;
     missionsEnabled: boolean;
+    rankRoleIds?: {
+        radiant?: string;
+        immortal?: string;
+        ascendant?: string;
+        diamond?: string;
+        platinum?: string;
+        gold?: string;
+        silver?: string;
+        bronze?: string;
+        iron?: string;
+        unranked?: string;
+    };
 }
 
 const guildConfigSchema = new Schema<IGuildConfig>({
@@ -31,6 +43,18 @@ const guildConfigSchema = new Schema<IGuildConfig>({
     leaderboardChannelId: { type: String },
     prefix: { type: String, default: '!' },
     missionsEnabled: { type: Boolean, default: true },
+    rankRoleIds: {
+        radiant: String,
+        immortal: String,
+        ascendant: String,
+        diamond: String,
+        platinum: String,
+        gold: String,
+        silver: String,
+        bronze: String,
+        iron: String,
+        unranked: String,
+    }
 }, { timestamps: true });
 
 export const GuildConfig = model<IGuildConfig>('GuildConfig', guildConfigSchema);

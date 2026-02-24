@@ -40,6 +40,12 @@ export interface FeatureFlags {
     valorantStats: boolean;       // /mystats, /stats, /lastmatch, dsb.
     valorantLeaderboards: boolean;// leaderboard server berdasarkan stats member
     valorantStreamer: boolean;    // /streamer-stats, dll.
+
+    // Profile & Personalization Features
+    profile: boolean;             // Master flag untuk profil (Bio, Agents)
+    rankFromRole: boolean;        // Integrasi rank ke discord role otomatis
+    rankFromApi: boolean;         // Aktif hanya sesudah RSO
+    autoRankSync: boolean;        // Node Cron harian sync API
 }
 
 export const featureFlags: FeatureFlags = {
@@ -56,6 +62,11 @@ export const featureFlags: FeatureFlags = {
     valorantStats: boolFlag('FF_VAL_STATS', false),
     valorantLeaderboards: boolFlag('FF_VAL_LEADERBOARDS', false),
     valorantStreamer: boolFlag('FF_VAL_STREAMER', false),
+
+    profile: boolFlag('FF_PROFILE', true),
+    rankFromRole: boolFlag('FF_RANK_FROM_ROLE', true),
+    rankFromApi: boolFlag('FF_RANK_FROM_API', false),
+    autoRankSync: boolFlag('FF_AUTO_RANK_SYNC', false),
 };
 
 export const isFeatureEnabled = (flag: keyof FeatureFlags): boolean => {

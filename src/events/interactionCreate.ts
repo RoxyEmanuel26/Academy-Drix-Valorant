@@ -18,8 +18,14 @@
 
 
 import { Events, Interaction } from 'discord.js';
+import { User } from '../database/models/User';
 import { LfgPost } from '../database/models/LfgPost';
-import { createLfgEmbed } from '../utils/embed';
+import { createLfgEmbed, createFunEmbed } from '../utils/embed';
+import { agentEmojiHints } from '../data/valorant';
+
+function sanitizeAgent(name: string): string {
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+}
 
 export default {
     name: Events.InteractionCreate,
@@ -102,7 +108,7 @@ export default {
                         await interaction.reply({ content: replyText, ephemeral: false });
 
                         if (autoJoined && lfgPost.participants.length === 5) {
-                            const mentions = lfgPost.participants.map(id => `<@${id}>`).join(' ');
+                            const mentions = lfgPost.participants.map((id: string) => `<@${id}>`).join(' ');
                             if (interaction.channel && 'send' in interaction.channel) {
                                 await interaction.channel.send(`Team penuh! Ayo berangkat 🚀\n${mentions}`);
                             }
@@ -135,7 +141,88 @@ export default {
                 return;
             }
         }
-        // ---------------------------------
+        // --- Modal Submit Logic ---
+        if (interaction.isModalSubmit()) {
+            if (interaction.customId === 'modal_set_main_agent') {
+                const agent1Raw = interaction.fields.getTextInputValue('agent_1');
+                const agent2Raw = interaction.fields.getTextInputValue('agent_2') || '';
+                const agent3Raw = interaction.fields.getTextInputValue('agent_3') || '';
+
+                const agent1 = sanitizeAgent(agent1Raw);
+                const agent2 = agent2Raw ? sanitizeAgent(agent2Raw) : '';
+                const agent3 = agent3Raw ? sanitizeAgent(agent3Raw) : '';
+
+                const validAgents = Object.keys(agentEmojiHints);
+
+                if (!validAgents.includes(agent1)) {
+                    await interaction.reply({ content: `❌ Agent \`${agent1}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    return;
+                }
+                if (agent2 && !validAgents.includes(agent2)) {
+                    await interaction.reply({ content: `❌ Agent \`${agent2}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    return;
+                }
+                if (agent3 && !validAgents.includes(agent3)) {
+                    await interaction.reply({ content: `❌ Agent \`${agent3}\` tidak ditemukan di database game VALORANT.`, ephemeral: true });
+                    return;
+                }
+
+                await User.findOneAndUpdate(
+                    { discordId: interaction.user.id },
+                    {
+                        mainAgent: agent1,
+                        mainAgent2: agent2 || undefined,
+                        mainAgent3: agent3 || undefined
+                    },
+                    { upsert: true, new: true }
+                );
+
+                const getEmoji = (name: string) => agentEmojiHints[name] ? agentEmojiHints[name][0] : '';
+                const lines = [];
+                lines.push(`🥇 Main    : **${agent1}** ${getEmoji(agent1)}`);
+                if (agent2) lines.push(`🥈 Second  : **${agent2}** ${getEmoji(agent2)}`);
+                else lines.push(`🥈 Second  : *-*`);
+                if (agent3) lines.push(`🥉 Third   : **${agent3}** ${getEmoji(agent3)}`);
+                else lines.push(`🥉 Third   : *-*`);
+
+                const embed = createFunEmbed(
+                    '✅ Main Agent Kamu Updated!',
+                    `━━━━━━━━━━━━━━━━━━━━━━\n${lines.join('\n')}\n━━━━━━━━━━━━━━━━━━━━━━\nSekarang semua orang tau kamu ${agent1} main sejati! 🔪`
+                );
+
+                await interaction.reply({ embeds: [embed] });
+                return;
+            }
+
+            if (interaction.customId === 'modal_set_bio') {
+                let bioText = interaction.fields.getTextInputValue('bio_text').trim();
+
+                bioText = bioText.replace(/https?:\/\/\S+/gi, '[Link Removed]');
+
+                const badWords = ['anjing', 'babi', 'kontol', 'memek', 'ngentot', 'bangsat', 'fuck', 'shit', 'bitch'];
+                const lowerBio = bioText.toLowerCase();
+                for (const word of badWords) {
+                    if (lowerBio.includes(word)) {
+                        await interaction.reply({ content: '❌ Bio kamu mengandung kata-kata tidak pantas! Tolong ganti dengan kata yang lebih baik 😊', ephemeral: true });
+                        return;
+                    }
+                }
+
+                await User.findOneAndUpdate(
+                    { discordId: interaction.user.id },
+                    { bio: bioText },
+                    { upsert: true, new: true }
+                );
+
+                const embed = createFunEmbed(
+                    '✅ Bio Kamu Tersimpan!',
+                    `━━━━━━━━━━━━━━━━━━━━━━\n📝 Bio baru kamu:\n*"${bioText}"*\n━━━━━━━━━━━━━━━━━━━━━━\nBio ini akan tampil secara permanen di profile card kamu!`
+                );
+
+                await interaction.reply({ embeds: [embed] });
+                return;
+            }
+        }
 
         if (!interaction.isChatInputCommand()) return;
 

@@ -33,6 +33,19 @@ export interface IUser extends Document {
         totalLosses?: number;
         winrate?: number;
     };
+
+    // Profile Customization
+    mainAgent?: string;
+    mainAgent2?: string;
+    mainAgent3?: string;
+    bio?: string;
+
+    // Rank History Tracking
+    lastKnownRank?: string;
+    lastKnownRankSource?: 'riot_api' | 'discord_role' | 'manual';
+    rankUpdatedAt?: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 const userSchema = new Schema<IUser>({
@@ -48,7 +61,16 @@ const userSchema = new Schema<IUser>({
         totalWins: Number,
         totalLosses: Number,
         winrate: Number,
-    }
+    },
+
+    mainAgent: { type: String },
+    mainAgent2: { type: String },
+    mainAgent3: { type: String },
+    bio: { type: String, maxlength: 100 },
+
+    lastKnownRank: { type: String, default: 'Unranked' },
+    lastKnownRankSource: { type: String, enum: ['riot_api', 'discord_role', 'manual'], default: 'manual' },
+    rankUpdatedAt: { type: Date }
 }, { timestamps: true });
 
 export const User = model<IUser>('User', userSchema);

@@ -30,6 +30,7 @@ export const env = {
         guildId: process.env.DISCORD_GUILD_ID || '',
         valorantRoleId: process.env.DISCORD_VALORANT_ROLE_ID || '',
         lfgChannelId: process.env.DISCORD_LFG_CHANNEL_ID || '',
+        introducingChannelId: process.env.DISCORD_INTRODUCING_CHANNEL_ID || '',
     },
     bot: {
         lfgTimeoutMinutes: parseInt(process.env.LFG_TIMEOUT_MINUTES || '60', 10),
