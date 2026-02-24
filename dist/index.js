@@ -40,8 +40,9 @@ const init = async () => {
         console.error('MONGO_URI is missing in .env!');
         process.exit(1);
     }
-    // Connect to DB
-    await (0, connection_1.connectDatabase)(env_1.env.database.mongoUri);
+    // Connect to DB dynamically based on server ID
+    const dbName = env_1.env.discord.guildId ? `guild_${env_1.env.discord.guildId}` : 'academy_drix_global';
+    await (0, connection_1.connectDatabase)(env_1.env.database.mongoUri, dbName);
     // Load Handlers
     await (0, eventHandler_1.loadEvents)(client);
     await (0, commandHandler_1.loadCommands)(client);

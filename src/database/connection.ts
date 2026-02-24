@@ -19,10 +19,11 @@
 
 import mongoose from 'mongoose';
 
-export const connectDatabase = async (uri: string) => {
+export const connectDatabase = async (uri: string, dbName?: string) => {
     try {
-        await mongoose.connect(uri);
-        console.log('✓ Connected to MongoDB!');
+        const options = dbName ? { dbName } : {};
+        await mongoose.connect(uri, options);
+        console.log(`✓ Connected to MongoDB! (Database: ${dbName || 'default'})`);
     } catch (error) {
         console.error('✗ Failed to connect to MongoDB:', error);
         process.exit(1);

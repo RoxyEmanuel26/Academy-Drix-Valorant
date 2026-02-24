@@ -23,7 +23,7 @@ const embed_1 = require("../../utils/embed");
 const env_1 = require("../../config/env");
 exports.default = {
     data: new discord_js_1.SlashCommandBuilder()
-        .setName('lfp')
+        .setName('lfg')
         .setDescription('Cari teman main VALORANT!')
         .addStringOption(option => option.setName('mode')
         .setDescription('Mode game')

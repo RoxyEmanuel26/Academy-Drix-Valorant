@@ -20,8 +20,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const LfgPost_1 = require("../../database/models/LfgPost");
 const embed_1 = require("../../utils/embed");
 exports.default = {
-    name: 'lfg-close',
-    description: 'Tutup postingan LFG kamu yang aktif.',
+    name: 'lfp-close',
+    aliases: ['lfg-close', 'party-close'],
+    description: 'Tutup postingan LFP/LFG kamu yang aktif.',
     async execute(message, args) {
         if (!message.guildId)
             return;

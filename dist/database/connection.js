@@ -22,10 +22,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectDatabase = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const connectDatabase = async (uri) => {
+const connectDatabase = async (uri, dbName) => {
     try {
-        await mongoose_1.default.connect(uri);
-        console.log('✓ Connected to MongoDB!');
+        const options = dbName ? { dbName } : {};
+        await mongoose_1.default.connect(uri, options);
+        console.log(`✓ Connected to MongoDB! (Database: ${dbName || 'default'})`);
     }
     catch (error) {
         console.error('✗ Failed to connect to MongoDB:', error);

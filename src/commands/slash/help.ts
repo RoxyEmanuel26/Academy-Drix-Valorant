@@ -43,10 +43,9 @@ export default {
                         { label: 'Profil & Personalisasi', value: 'profile', emoji: '👤' },
                         { label: 'Fun & Games', value: 'fun', emoji: '🎲' },
                         { label: 'Missions', value: 'missions', emoji: '🎯' },
-                        { label: 'LFG', value: 'lfg', emoji: '🎮' },
+                        { label: 'LFP (Party)', value: 'lfp', emoji: '🎮' },
                         { label: 'Tournaments', value: 'tournaments', emoji: '🚩' },
-                        { label: 'Info & Global', value: 'info', emoji: 'ℹ️' },
-                        { label: 'Admin', value: 'admin', emoji: '⚙️' },
+                        { label: 'Info & Global', value: 'info', emoji: 'ℹ️' }
                     ])
             );
 
@@ -104,8 +103,8 @@ export default {
                         .setDescription('`/missions` atau `!missions` - Lihat misi aktif harian/mingguan');
                     break;
                 case 'lfg':
-                    newEmbed.setTitle('🎮 Looking For Party (LFP)')
-                        .setDescription('`/lfp` atau `!lfp` (alias: `!party`, `!mabar`) - Cari teman mabar\n`/lfp-close` atau `!lfp-close` - Tutup post LFP');
+                    newEmbed.setTitle('🎮 Looking For Party (LFG/LFP)')
+                        .setDescription('`/lfg` atau `/lfp` (Prefix: `!lfg`, `!lfp`) - Cari teman mabar\n`/lfg-close` atau `/lfp-close` (Prefix: `!lfg-close`, `!lfp-close`) - Tutup post aktif');
                     break;
                 case 'tournaments':
                     newEmbed.setTitle('🚩 Tournaments')
@@ -119,10 +118,6 @@ export default {
                         newEmbed.setTitle('ℹ️ Info & Global Stats')
                             .setDescription('`/status` atau `!status` - Status Server AP Riot\n`/agents` atau `!agents` - Info role');
                     }
-                    break;
-                case 'admin':
-                    newEmbed.setTitle('⚙️ Admin Config')
-                        .setDescription('`/config` atau `!config` - Settings Server\n`/set-leaderboard-channel` - Set channel LB\n`/admin-profile` atau `!admin-profile` - Moderasi profile member\n`/show-rank-roles` atau `!show-rank-roles` - Cek roles Rank');
                     break;
             }
 

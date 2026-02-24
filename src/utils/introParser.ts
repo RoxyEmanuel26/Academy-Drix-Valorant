@@ -12,7 +12,7 @@
 import { Message } from 'discord.js';
 import { User } from '../database/models/User';
 
-export async function parseIntroduction(message: Message) {
+export async function parseIntroduction(message: Message, isRetroactive: boolean = false) {
     const content = message.content;
     const lines = content.split('\n');
     let riotId = '-';
@@ -20,6 +20,8 @@ export async function parseIntroduction(message: Message) {
     let aboutMe = '-';
 
     for (const line of lines) {
+        if (!line.includes('★┇')) continue;
+
         const lowerLine = line.toLowerCase();
 
         // Match: "★┇ID Roblox/Valo: Name#Tag"
@@ -88,7 +90,9 @@ export async function parseIntroduction(message: Message) {
 
         if (updated) {
             await userRecord.save();
-            await message.react('✅'); // Acknowledge the parsing
+            if (!isRetroactive) {
+                await message.react('✅'); // Acknowledge only if it's live
+            }
         }
 
     } catch (e) {

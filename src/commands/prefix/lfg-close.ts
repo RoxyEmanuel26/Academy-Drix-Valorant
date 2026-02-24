@@ -22,8 +22,9 @@ import { LfgPost } from '../../database/models/LfgPost';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
 
 export default {
-    name: 'lfg-close',
-    description: 'Tutup postingan LFG kamu yang aktif.',
+    name: 'lfp-close',
+    aliases: ['lfg-close', 'party-close'],
+    description: 'Tutup postingan LFP/LFG kamu yang aktif.',
     async execute(message: Message, args: string[]) {
         if (!message.guildId) return;
 
