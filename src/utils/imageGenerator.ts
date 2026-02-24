@@ -13,6 +13,9 @@ import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import { GuildMember, User as DiscordUser, AttachmentBuilder } from 'discord.js';
 import path from 'path';
 
+// Register the custom font globally once
+GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'Puffberry.ttf'), 'Puffberry');
+
 // Define parameters object
 export interface IDCardData {
     discordId: string;
@@ -44,12 +47,13 @@ export async function generateProfileCard(data: IDCardData): Promise<AttachmentB
     ctx.fillStyle = '#000000'; // Make sure this contrasts with the background
     ctx.font = 'bold 32px sans-serif';
     ctx.fillText('KARTU ACADEMY DRIX', canvas.width / 2, 50);
-    ctx.font = 'bold 28px sans-serif';
+    ctx.font = '36px "Puffberry"'; // Use the newly registered custom font here
     ctx.fillText('WONDERPLAY', canvas.width / 2, 85);
 
     // 3. Draw Info Text (Left Side)
     ctx.textAlign = 'left';
     ctx.font = '24px sans-serif';
+    ctx.fillStyle = '#000000';
     const startX = 50;
     const valueX = 250;
     let startY = 160;
@@ -114,14 +118,24 @@ export async function generateProfileCard(data: IDCardData): Promise<AttachmentB
     // 5. Draw Member Since / Footer Dates below Avatar
     ctx.font = 'bold 20px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#000000'; // Make black so it is visible against the white background
+
+    // Add a stroke outline to make it readable across vibrant gradients
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#ffffff';
+    ctx.fillStyle = '#000000'; // Fill with black text
 
     const dateParts = data.joinDate.split(' ');
     // Split the date text into two lines: 'DD Bulan' and 'YYYY'
     if (dateParts.length >= 3) {
+        // Line 1
+        ctx.strokeText(dateParts[0] + ' ' + dateParts[1], xAvatar + (avatarSize / 2), yAvatar + avatarSize + 35);
         ctx.fillText(dateParts[0] + ' ' + dateParts[1], xAvatar + (avatarSize / 2), yAvatar + avatarSize + 35);
+
+        // Line 2
+        ctx.strokeText(dateParts[2], xAvatar + (avatarSize / 2), yAvatar + avatarSize + 60);
         ctx.fillText(dateParts[2], xAvatar + (avatarSize / 2), yAvatar + avatarSize + 60);
     } else {
+        ctx.strokeText(data.joinDate, xAvatar + (avatarSize / 2), yAvatar + avatarSize + 35);
         ctx.fillText(data.joinDate, xAvatar + (avatarSize / 2), yAvatar + avatarSize + 35);
     }
 
