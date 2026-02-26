@@ -17,11 +17,10 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
-import { isFeatureEnabled } from '../../config/featureFlags';
-import { env } from '../../config/env';
+import { featureGuard } from '../../utils/featureGuard';
 
 export default {
     data: new SlashCommandBuilder()
@@ -37,15 +36,12 @@ export default {
                     { name: 'KDA', value: 'kda' }
                 )),
     async execute(interaction: ChatInputCommandInteraction) {
-        if (!isFeatureEnabled('valorantLeaderboards')) {
-            return interaction.reply({ content: 'Fitur leaderboard VALORANT sedang dinonaktifkan oleh admin.', flags: MessageFlags.Ephemeral });
+        const guard = featureGuard('LEADERBOARD_API');
+        if (!guard.allowed) {
+            return interaction.reply({ content: guard.reason, flags: MessageFlags.Ephemeral });
         }
 
-        if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi sepenuhnya. Fitur belum dapat digunakan.')], flags: MessageFlags.Ephemeral });
-        }
-
-        const users = await User.find({ optIn: true }).exec();
+        const users = await User.find({ optedIn: true }).exec();
 
         if (users.length === 0) {
             return interaction.reply({ embeds: [createErrorEmbed('Belum ada player yang menghubungkan akun di server ini.')] });
@@ -70,7 +66,8 @@ export default {
 
         const embed = createFunEmbed(
             `🏆 Server Leaderboard: ${type.toUpperCase()}`,
-            description || 'Wah, belum ada data yang cukup untuk di-rank!'
+            (description || 'Wah, belum ada data yang cukup untuk di-rank!') +
+            `\n\n*📊 Leaderboard ini hanya menampilkan profil member dan rank resmi VALORANT. Ini tidak berafiliasi dengan sistem ranked resmi Riot Games.*`
         );
 
         await interaction.reply({ embeds: [embed] });

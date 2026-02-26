@@ -28,7 +28,7 @@ export default {
     async execute(message: Message, args: string[]) {
         if (!message.guildId) return;
         const user = await User.findOne({ discordId: message.author.id });
-        if (!user || !user.optIn) return message.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot! `!link`')] });
+        if (!user || !user.optedIn) return message.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot! `!link`')] });
 
         let missions = await Mission.find({ guildId: message.guildId, userId: message.author.id, completed: false });
 

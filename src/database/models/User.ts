@@ -26,7 +26,14 @@ export interface IUser extends Document {
     riotTagLine?: string;
     region: string;
     linkedAt?: Date;
-    optIn: boolean;
+    optedIn: boolean; // Required by Riot Policy
+
+    // RSO Auth Tokens
+    accessToken?: string;
+    refreshToken?: string;
+    tokenExpiry?: number;
+    lastUpdated?: Date;
+
     statsCache?: {
         rank?: string;
         totalWins?: number;
@@ -65,7 +72,13 @@ const userSchema = new Schema<IUser>({
     riotTagLine: { type: String },
     region: { type: String, default: 'ap' },
     linkedAt: { type: Date },
-    optIn: { type: Boolean, default: false },
+    optedIn: { type: Boolean, default: false },
+
+    accessToken: { type: String },
+    refreshToken: { type: String },
+    tokenExpiry: { type: Number },
+    lastUpdated: { type: Date },
+
     statsCache: {
         rank: String,
         totalWins: Number,

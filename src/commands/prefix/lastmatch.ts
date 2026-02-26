@@ -20,31 +20,30 @@
 import { Message } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
-import { isFeatureEnabled } from '../../config/featureFlags';
-import { env } from '../../config/env';
+import { featureGuard } from '../../utils/featureGuard';
+import { getValidAccessToken } from '../../utils/tokenManager';
 
 export default {
     name: 'lastmatch',
     description: 'Lihat info match VALORANT terakhir kamu.',
     async execute(message: Message, args: string[]) {
-        if (!isFeatureEnabled('valorantStats')) {
-            return message.reply('Fitur last match sedang dinonaktifkan oleh admin.');
+        const guard = featureGuard('MATCH_HISTORY');
+        if (!guard.allowed) {
+            return message.reply(guard.reason || 'Fitur dinonaktifkan.');
         }
 
-        if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return message.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')] });
+        const accessToken = await getValidAccessToken(message.author.id);
+        if (!accessToken) {
+            return message.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `!link-account` untuk menghubungkan akun Riot kamu terlebih dahulu sebelum menggunakan fitur ini.')] });
         }
 
         const user = await User.findOne({ discordId: message.author.id });
-
-        if (!user || !user.optIn || !user.riotPuuid) {
-            return message.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot! `!link`')] });
-        }
+        if (!user) return;
 
         try {
             const embed = createFunEmbed(
                 `🕹️ Last Match: ${user.riotGameName}`,
-                `**Map:** Ascent\n**Agent:** Jett\n**KDA:** 20/15/5\n**Hasil:** VICTORY 🎉\n\n*Wah, ternyata kamu lumayan jago bawa Jett kemarin!*`
+                `**Map:** Ascent\n**Info:** Jett (Kamu) | Omen (Anonymous) | Sage (Anonymous)\n**KDA:** 20/15/5\n**Hasil:** VICTORY 🎉\n\n*Statistik ini menampilkan namamu saja karena privasi rekan tim diutamakan.*`
             );
 
             await message.reply({ embeds: [embed] });

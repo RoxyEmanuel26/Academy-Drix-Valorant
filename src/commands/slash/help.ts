@@ -20,6 +20,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, StringSelectMenuBuilder, ComponentType, MessageFlags } from 'discord.js';
 import { createFunEmbed } from '../../utils/embed';
 import { featureFlags } from '../../config/featureFlags';
+import { env } from '../../config/env';
 
 export default {
     data: new SlashCommandBuilder()
@@ -64,30 +65,30 @@ export default {
 
             switch (selection) {
                 case 'account':
-                    if (!featureFlags.valorantStats) {
+                    if (!env.riot.rsoEnabled) {
                         newEmbed.setTitle('🔗 Account & Linking (Segera Hadir 🚧)')
-                            .setDescription('Fitur ini akan diaktifkan setelah integrasi Riot/RSO dihidupkan oleh admin. Sementara itu, nikmati dulu games & feature lainnya ya! ✨');
+                            .setDescription('Fitur RSO/Riot Sign-On saat ini sedang dinonaktifkan oleh admin. Nikmati fitur lainnya sementara waktu! ✨');
                     } else {
                         newEmbed.setTitle('🔗 Account & Linking')
-                            .setDescription('`/link` atau `!link` - Login RSO\n`/unlink` atau `!unlink` - Hapus akun\n`/me` atau `!me` - Lihat profil\n`/privacy` atau `!privacy` - Kebijakan privasi');
+                            .setDescription('`/link-account` atau `!link-account` - Tautkan akun Riot (RSO)\n`/unlink-account` atau `!unlink-account` - Cabut tautan akun Riot\n\n*Catatan Privasi: Semua data VALORANT membutuhkan persetujuan/klaim RSO Anda. Anda dapat mencabut data kapan saja.*');
                     }
                     break;
                 case 'stats':
-                    if (!featureFlags.valorantStats) {
+                    if (!env.riot.features.stats) {
                         newEmbed.setTitle('📊 Personal Stats (Segera Hadir 🚧)')
                             .setDescription('Fitur ini akan diaktifkan setelah integrasi Riot/RSO dihidupkan oleh admin.');
                     } else {
                         newEmbed.setTitle('📊 Personal Stats')
-                            .setDescription('`/mystats` atau `!mystats` - Profil & Winrate kamu\n`/lastmatch` atau `!lastmatch` - Info Match Terakhir\n`/stats` atau `!stats @user` - Stats teman');
+                            .setDescription('`/mystats` atau `!mystats` - Profil & Winrate VALORANT resmi\n`/lastmatch` atau `!lastmatch` - Info Match Terakhir (Player Lain Anonymous jika tidak Link)\n`/stats` atau `!stats @user` - Stats teman');
                     }
                     break;
                 case 'leaderboard':
-                    if (!featureFlags.valorantLeaderboards) {
-                        newEmbed.setTitle('🏆 Leaderboards (Segera Hadir 🚧)')
+                    if (!env.riot.features.leaderboardApi) {
+                        newEmbed.setTitle('🏆 Leaderboards Riot (Segera Hadir 🚧)')
                             .setDescription('Fitur ini akan diaktifkan setelah integrasi Riot/RSO dihidupkan oleh admin.');
                     } else {
                         newEmbed.setTitle('🏆 Leaderboards')
-                            .setDescription('`/leaderboard` atau `!leaderboard <type>` - Lihat ranking server');
+                            .setDescription('`/leaderboard` atau `!leaderboard <type>` - Lihat ranking resmi server (Wajib Opt-in)');
                     }
                     break;
                 case 'profile':

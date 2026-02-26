@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { User } from '../../database/models/User';
 import { Mission } from '../../database/models/Mission';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
@@ -29,7 +29,7 @@ export default {
     async execute(interaction: ChatInputCommandInteraction) {
         if (!interaction.guildId) return;
         const user = await User.findOne({ discordId: interaction.user.id });
-        if (!user || !user.optIn) return interaction.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot! `/link`')], flags: MessageFlags.Ephemeral });
+        if (!user || !user.optedIn) return interaction.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot! `/link-account`')], flags: MessageFlags.Ephemeral });
 
         let missions = await Mission.find({ guildId: interaction.guildId, userId: interaction.user.id, completed: false });
 

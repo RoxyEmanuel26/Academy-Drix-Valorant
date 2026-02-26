@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { Tournament } from '../../database/models/Tournament';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
@@ -34,7 +34,7 @@ export default {
         if (!interaction.guildId) return;
 
         const user = await User.findOne({ discordId: interaction.user.id });
-        if (!user || !user.optIn) return interaction.reply({ embeds: [createErrorEmbed('Kamu wajib connect akun menggunakan `/link` sebelum ikut turnamen!')], flags: MessageFlags.Ephemeral });
+        if (!user || !user.optedIn) return interaction.reply({ embeds: [createErrorEmbed('Kamu wajib connect akun menggunakan `/link-account` sebelum ikut turnamen!')], flags: MessageFlags.Ephemeral });
 
         const tourney = await Tournament.findOne({ guildId: interaction.guildId, status: 'upcoming' });
         if (!tourney) return interaction.reply({ embeds: [createErrorEmbed('Tidak ada turnamen yang open registration saat ini.')], flags: MessageFlags.Ephemeral });

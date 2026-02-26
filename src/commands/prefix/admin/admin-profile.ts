@@ -58,7 +58,7 @@ export default {
                     { name: 'Agent 1', value: userDb.mainAgent || '*kosong*', inline: true },
                     { name: 'Agent 2', value: userDb.mainAgent2 || '*kosong*', inline: true },
                     { name: 'Agent 3', value: userDb.mainAgent3 || '*kosong*', inline: true },
-                    { name: 'Riot Linked', value: userDb.optIn ? 'Yes' : 'No', inline: true },
+                    { name: 'Riot Linked', value: userDb.optedIn ? 'Yes' : 'No', inline: true },
                     { name: 'Riot PUUID', value: userDb.riotPuuid ? `\`${userDb.riotPuuid}\`` : '*kosong*', inline: true },
                     { name: 'Created', value: userDb.createdAt ? new Date(userDb.createdAt as any).toLocaleString() : '*unknown*', inline: true }
                 );

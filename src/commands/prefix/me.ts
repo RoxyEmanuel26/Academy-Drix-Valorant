@@ -32,7 +32,7 @@ export default {
 
         const user = await User.findOne({ discordId: message.author.id });
 
-        if (!user || !user.optIn) {
+        if (!user || !user.optedIn) {
             return message.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `!link` untuk memulai.')] });
         }
 

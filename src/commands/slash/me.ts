@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
 import { isFeatureEnabled } from '../../config/featureFlags';
@@ -33,7 +33,7 @@ export default {
 
         const user = await User.findOne({ discordId: interaction.user.id });
 
-        if (!user || !user.optIn) {
+        if (!user || !user.optedIn) {
             return interaction.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `/link` untuk memulai.')], flags: MessageFlags.Ephemeral });
         }
 

@@ -20,26 +20,25 @@
 import { Message } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
-import { isFeatureEnabled } from '../../config/featureFlags';
-import { env } from '../../config/env';
+import { featureGuard } from '../../utils/featureGuard';
+import { getValidAccessToken } from '../../utils/tokenManager';
 
 export default {
     name: 'mystats',
     description: 'Lihat statisik santai VALORANT kamu!',
     async execute(message: Message, args: string[]) {
-        if (!isFeatureEnabled('valorantStats')) {
-            return message.reply('Fitur statistik VALORANT sedang dinonaktifkan oleh admin. Nanti nyala lagi kok! ✨');
+        const guard = featureGuard('STATS');
+        if (!guard.allowed) {
+            return message.reply(guard.reason || 'Fitur dinonaktifkan.');
         }
 
-        if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return message.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')] });
+        const accessToken = await getValidAccessToken(message.author.id);
+        if (!accessToken) {
+            return message.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `!link-account` untuk menghubungkan akun Riot kamu terlebih dahulu sebelum menggunakan fitur ini.')] });
         }
 
         const user = await User.findOne({ discordId: message.author.id });
-
-        if (!user || !user.optIn || !user.riotPuuid) {
-            return message.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `!link` untuk memulai.')] });
-        }
+        if (!user) return;
 
         try {
             const stats = user.statsCache || { rank: 'Unranked', winrate: 50, totalWins: 10, totalLosses: 10 };

@@ -17,6 +17,7 @@
  */
 
 import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, EmbedBuilder, MessageFlags } from 'discord.js';
+import { featureGuard } from '../../../utils/featureGuard';
 import { featureFlags } from '../../../config/featureFlags';
 import { User } from '../../../database/models/User';
 import { GamePoints } from '../../../database/models/GamePoints';
@@ -37,8 +38,9 @@ export default {
         ),
 
     async execute(interaction: ChatInputCommandInteraction) {
-        if (!featureFlags.profile) {
-            return interaction.reply({ content: 'Fitur Profile sedang dinonaktifkan oleh admin.', flags: MessageFlags.Ephemeral });
+        const guard = featureGuard('PROFILE');
+        if (!guard.allowed) {
+            return interaction.reply({ content: guard.reason, flags: MessageFlags.Ephemeral });
         }
 
         const callerId = interaction.user.id;
@@ -112,7 +114,7 @@ export default {
 
             // Riot Link
             const riotTag = userDb?.riotTagLine ? `#${userDb.riotTagLine}` : '';
-            const linkStatus = userDb?.optIn ? `✅ Terhubung (${userDb.riotGameName}${riotTag})` : '❌ Belum Terhubung (`/link`)';
+            const linkStatus = userDb?.optedIn ? `✅ Terhubung (${userDb.riotGameName}${riotTag})` : '❌ Belum Terhubung (`/link-account`)';
             embed.addFields({
                 name: '🎮 Riot Account',
                 value: linkStatus,

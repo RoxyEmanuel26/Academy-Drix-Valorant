@@ -150,14 +150,14 @@ export async function parseIntroduction(message: Message, isRetroactive: boolean
                     if (name && tag) {
                         userRecord.riotGameName = name.trim();
                         userRecord.riotTagLine = tag.trim();
-                        userRecord.optIn = true;
+                        userRecord.optedIn = true;
                         updated = true;
                     }
                 } else {
                     // Support non-hashtag inputs like "XirdNall"
                     userRecord.riotGameName = riotId.trim();
                     userRecord.riotTagLine = ''; // Leave blank or NA
-                    userRecord.optIn = true;
+                    userRecord.optedIn = true;
                     updated = true;
                 }
             }

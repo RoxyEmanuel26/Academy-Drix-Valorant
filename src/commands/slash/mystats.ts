@@ -17,31 +17,31 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
-import { isFeatureEnabled } from '../../config/featureFlags';
-import { env } from '../../config/env';
+import { featureGuard } from '../../utils/featureGuard';
+import { getValidAccessToken } from '../../utils/tokenManager';
 
 export default {
     data: new SlashCommandBuilder()
         .setName('mystats')
         .setDescription('Lihat statisik santai VALORANT kamu!'),
     async execute(interaction: ChatInputCommandInteraction) {
-        if (!isFeatureEnabled('valorantStats')) {
-            return interaction.reply({ content: 'Fitur statistik VALORANT sedang dinonaktifkan oleh admin. Nanti nyala lagi kok! ✨', flags: MessageFlags.Ephemeral });
-        }
-
-        if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], flags: MessageFlags.Ephemeral });
+        const guard = featureGuard('STATS');
+        if (!guard.allowed) {
+            return interaction.reply({ content: guard.reason, flags: MessageFlags.Ephemeral });
         }
 
         await interaction.deferReply();
-        const user = await User.findOne({ discordId: interaction.user.id });
 
-        if (!user || !user.optIn || !user.riotPuuid) {
-            return interaction.followUp({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `/link` untuk memulai.')] });
+        const accessToken = await getValidAccessToken(interaction.user.id);
+        if (!accessToken) {
+            return interaction.followUp({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `/link-account` untuk menghubungkan akun Riot kamu terlebih dahulu sebelum menggunakan fitur ini.')] });
         }
+
+        const user = await User.findOne({ discordId: interaction.user.id });
+        if (!user) return; // Should exist if accessToken returned valid
 
         try {
             const stats = user.statsCache || { rank: 'Unranked', winrate: 50, totalWins: 10, totalLosses: 10 };

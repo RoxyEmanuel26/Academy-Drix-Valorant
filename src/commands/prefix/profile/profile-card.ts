@@ -17,6 +17,7 @@
  */
 
 import { Message, GuildMember, EmbedBuilder } from 'discord.js';
+import { featureGuard } from '../../../utils/featureGuard';
 import { featureFlags } from '../../../config/featureFlags';
 import { User } from '../../../database/models/User';
 import { GamePoints } from '../../../database/models/GamePoints';
@@ -31,8 +32,9 @@ export default {
     aliases: ['profile-card', 'p'],
     description: 'Tampilkan stat text profile Valorant kamu (!profile)',
     async execute(message: Message, args: string[]) {
-        if (!featureFlags.profile) {
-            return message.reply('Fitur Profile sedang dinonaktifkan oleh admin.');
+        const guard = featureGuard('PROFILE');
+        if (!guard.allowed) {
+            return message.reply(guard.reason || 'Fitur dinonaktifkan.');
         }
 
         const callerId = message.author.id;
@@ -97,7 +99,7 @@ export default {
             });
 
             const riotTag = userDb?.riotTagLine ? `#${userDb.riotTagLine}` : '';
-            const linkStatus = userDb?.optIn ? `✅ Terhubung (${userDb.riotGameName}${riotTag})` : '❌ Belum Terhubung (`!link`)';
+            const linkStatus = userDb?.optedIn ? `✅ Terhubung (${userDb.riotGameName}${riotTag})` : '❌ Belum Terhubung (`!link-account`)';
             embed.addFields({
                 name: '🎮 Riot Account',
                 value: linkStatus,

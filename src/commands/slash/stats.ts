@@ -17,11 +17,10 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
-import { isFeatureEnabled } from '../../config/featureFlags';
-import { env } from '../../config/env';
+import { featureGuard } from '../../utils/featureGuard';
 
 export default {
     data: new SlashCommandBuilder()
@@ -30,12 +29,9 @@ export default {
         .addUserOption(option =>
             option.setName('user').setDescription('Pilih player').setRequired(true)),
     async execute(interaction: ChatInputCommandInteraction) {
-        if (!isFeatureEnabled('valorantStats')) {
-            return interaction.reply({ content: 'Fitur statistik VALORANT sedang dinonaktifkan oleh admin.', flags: MessageFlags.Ephemeral });
-        }
-
-        if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], flags: MessageFlags.Ephemeral });
+        const guard = featureGuard('STATS');
+        if (!guard.allowed) {
+            return interaction.reply({ content: guard.reason, flags: MessageFlags.Ephemeral });
         }
 
         const target = interaction.options.getUser('user');
@@ -43,8 +39,11 @@ export default {
 
         const user = await User.findOne({ discordId: target.id });
 
-        if (!user || !user.optIn) {
-            return interaction.reply({ embeds: [createErrorEmbed(`<@${target.id}> belum menghubungkan akun Riot mereka.`)], flags: MessageFlags.Ephemeral });
+        if (!user || !user.optedIn) {
+            return interaction.reply({
+                content: '❌ Kamu hanya bisa melihat profil player yang sudah menghubungkan akun Riot mereka di server ini.',
+                flags: MessageFlags.Ephemeral
+            });
         }
 
         const stats = user.statsCache || { rank: 'Unranked', winrate: 50, totalWins: 10, totalLosses: 10 };

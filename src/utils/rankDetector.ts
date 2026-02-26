@@ -81,7 +81,7 @@ export async function getMemberRank(
 ): Promise<{ rank: string; emoji: string; color: number; source: 'riot_api' | 'discord_role' | 'manual' }> {
 
     // PRIORITY 1: Riot API Source
-    if (flags.rankFromApi && flags.valorantStats && userDb?.optIn && userDb?.riotPuuid) {
+    if (flags.rankFromApi && flags.valorantStats && userDb?.optedIn && userDb?.riotPuuid) {
         // TODO: Await Valorant API Implementation in rankSyncService.ts
         // const riotRank = await getRankFromRiotAPI(userDb.riotPuuid);
         // return { ...riotRank, source: 'riot_api' };

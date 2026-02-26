@@ -20,14 +20,18 @@
 import { Message } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
-import { isFeatureEnabled } from '../../config/featureFlags';
-import { env } from '../../config/env';
+import { featureGuard } from '../../utils/featureGuard';
 
 export default {
     name: 'leaderboard',
     description: 'Lihat Leaderboard Server ini!',
     async execute(message: Message, args: string[]) {
-        const users = await User.find({ optIn: true }).exec();
+        const guard = featureGuard('LEADERBOARD_API');
+        if (!guard.allowed) {
+            return message.reply(guard.reason || 'Fitur dinonaktifkan.');
+        }
+
+        const users = await User.find({ optedIn: true }).exec();
 
         if (users.length === 0) {
             return message.reply({ embeds: [createErrorEmbed('Belum ada player yang menghubungkan akun di server ini.')] });
@@ -52,7 +56,8 @@ export default {
 
         const embed = createFunEmbed(
             `🏆 Server Leaderboard: ${type.toUpperCase()}`,
-            description || 'Wah, belum ada data yang cukup untuk di-rank!'
+            (description || 'Wah, belum ada data yang cukup untuk di-rank!') +
+            `\n\n*📊 Leaderboard ini hanya menampilkan profil member dan rank resmi VALORANT. Ini tidak berafiliasi dengan sistem ranked resmi Riot Games.*`
         );
 
         await message.reply({ embeds: [embed] });

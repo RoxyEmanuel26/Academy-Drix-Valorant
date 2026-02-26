@@ -23,6 +23,7 @@ import { connectDatabase } from './database/connection';
 import { loadEvents } from './utils/eventHandler';
 import { loadCommands } from './utils/commandHandler';
 import { startCronJobs } from './jobs/cronJobs';
+import { startTokenCleanupCron } from './utils/tokenManager';
 
 import { env } from './config/env';
 
@@ -62,12 +63,27 @@ const init = async () => {
     await loadEvents(client);
     await loadCommands(client);
 
+    // Boot Log Table for Riot API State
+    console.log('\n--- 🛡️ Riot API Compliance Boot State 🛡️ ---');
+    console.log(`API Key Type : ${env.riot.apiKeyType.toUpperCase()}`);
+    console.log(`RSO Enabled  : ${env.riot.rsoEnabled}`);
+    console.log(`FEATURES:`);
+    console.log(`- LINK        : ${env.riot.features.linkAccount}`);
+    console.log(`- PROFILE     : ${env.riot.features.profile}`);
+    console.log(`- RANK        : ${env.riot.features.rank}`);
+    console.log(`- MATCH HIST  : ${env.riot.features.matchHistory}`);
+    console.log(`- LEADERBOARD : ${env.riot.features.leaderboardApi}`);
+    console.log('-------------------------------------------\n');
+
     // Login
     if (env.discord.token) {
         await client.login(env.discord.token);
 
         // Start Fun & Games Cron Jobs
         startCronJobs(client);
+
+        // Start RSO Token Expiry Watchdog
+        startTokenCleanupCron();
     } else {
         console.warn('DISCORD_TOKEN is not provided. Bot will not connect to Discord.');
     }

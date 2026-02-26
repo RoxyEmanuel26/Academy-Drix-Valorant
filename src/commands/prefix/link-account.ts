@@ -17,35 +17,36 @@
  */
 
 
-import { Message } from 'discord.js';
+import { Message, EmbedBuilder } from 'discord.js';
 import { getRsoAuthUrl } from '../../services/riot/rso';
-import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
-import { isFeatureEnabled } from '../../config/featureFlags';
-import { env } from '../../config/env';
+import { featureGuard } from '../../utils/featureGuard';
 
 export default {
-    name: 'link',
+    name: 'link-account',
     description: 'Hubungkan akun Riot (VALORANT) kamu ke bot.',
     async execute(message: Message, args: string[]) {
-        if (!isFeatureEnabled('valorantStats')) {
-            return message.reply('Fitur akun dan statistik VALORANT sedang dinonaktifkan oleh admin. Nanti akan menyala ya! ✨');
-        }
-
-        if (!env.riot.apiKey || !env.riot.rso.clientId || !env.riot.rso.clientSecret || !env.riot.rso.redirectUri) {
-            return message.reply({ embeds: [createErrorEmbed('Riot API/RSO belum dikonfigurasi sepenuhnya. Fitur belum dapat digunakan.')] });
+        const guard = featureGuard('LINK_ACCOUNT');
+        if (!guard.allowed) {
+            return message.reply(guard.reason || 'Fitur dinonaktifkan.');
         }
 
         const url = getRsoAuthUrl();
-        const embed = createFunEmbed(
-            '🔗 Link Akun Riot',
-            `Halo ${message.author}! Silakan klik [link ini](${url}) untuk login via Riot Sign On.\n\nJangan khawatir, bot ini aman dan mematuhi Riot Games Policy! Kami hanya mengambil data dasar untuk Leaderboard dan Fun Games.`
-        );
+
+        const embed = new EmbedBuilder()
+            .setTitle('🔗 Hubungkan Akun Riot Kamu')
+            .setColor('#FF4655')
+            .setDescription(`Dengan menghubungkan akun, kamu menyetujui bahwa:\n` +
+                `✅ Bot akan mengakses data VALORANT kamu (rank, stats, match history) atas nama kamu\n` +
+                `✅ Data kamu disimpan secara aman di database bot\n` +
+                `✅ Kamu bisa mencabut akses kapan saja dengan \`!unlink-account\`\n\n` +
+                `Klik link berikut untuk login dengan akun Riot kamu:\n[Login dengan Riot Games](${url})\n\n` +
+                `⚠️ *Link ini hanya berlaku selama 5 menit.*`);
 
         try {
             await message.author.send({ embeds: [embed] });
             await message.reply('Cek DM kamu ya untuk link login RSO! 🚀');
         } catch (err) {
-            await message.reply({ embeds: [embed] });
+            await message.reply({ content: 'Sepertinya DM kamu tertutup. Ini linknya:', embeds: [embed] });
         }
     },
 };

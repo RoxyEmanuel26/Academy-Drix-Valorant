@@ -29,7 +29,7 @@ export default {
         if (!message.guildId) return;
 
         const user = await User.findOne({ discordId: message.author.id });
-        if (!user || !user.optIn) return message.reply({ embeds: [createErrorEmbed('Kamu wajib connect akun menggunakan `!link` sebelum ikut turnamen!')] });
+        if (!user || !user.optedIn) return message.reply({ embeds: [createErrorEmbed('Kamu wajib connect akun menggunakan `!link-account` sebelum ikut turnamen!')] });
 
         const tourney = await Tournament.findOne({ guildId: message.guildId, status: 'upcoming' });
         if (!tourney) return message.reply({ embeds: [createErrorEmbed('Tidak ada turnamen yang open registration saat ini.')] });

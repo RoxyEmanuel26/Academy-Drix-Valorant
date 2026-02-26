@@ -60,6 +60,6 @@ export async function syncRankFromRiotAPI(
 export async function scheduledRankSync(): Promise<void> {
     if (!featureFlags.valorantStats || !featureFlags.autoRankSync) return;
 
-    // TODO: Loop through optIn=true users and queue syncRankFromRiotAPI()
+    // TODO: Loop through optedIn=true users and queue syncRankFromRiotAPI()
     console.log('[Cron Job] Scheduled rank sync queued - pending Riot API endpoints.');
 }

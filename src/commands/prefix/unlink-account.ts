@@ -20,23 +20,28 @@
 import { Message } from 'discord.js';
 import { User } from '../../database/models/User';
 import { createFunEmbed, createErrorEmbed } from '../../utils/embed';
-import { isFeatureEnabled } from '../../config/featureFlags';
 
 export default {
-    name: 'unlink',
+    name: 'unlink-account',
     description: 'Hapus hubungan akun Riot dari bot ini.',
     async execute(message: Message, args: string[]) {
-        if (!isFeatureEnabled('valorantStats')) {
-            return message.reply('Fitur akun dan statistik VALORANT sedang dinonaktifkan oleh admin.');
-        }
-
         const user = await User.findOne({ discordId: message.author.id });
 
-        if (!user || !user.optIn) {
+        if (!user || (!user.optedIn && !user.accessToken)) {
             return message.reply({ embeds: [createErrorEmbed('Kamu belum menghubungkan akun Riot apa pun!')] });
         }
 
-        await User.deleteOne({ discordId: message.author.id });
+        // Hapus HANYA data Riot/RSO dan reset optIn flag
+        user.optedIn = false;
+        user.accessToken = undefined;
+        user.refreshToken = undefined;
+        user.tokenExpiry = undefined;
+        user.riotPuuid = undefined;
+        user.riotGameName = undefined;
+        user.riotTagLine = undefined;
+        user.region = 'ap';
+
+        await user.save();
 
         await message.reply({
             embeds: [createFunEmbed('💔 Unlinked', 'Akun Riot kamu telah berhasil dihapus dari sistem kami. Kami harap kamu kembali lagi nanti!')]

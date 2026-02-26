@@ -38,7 +38,7 @@ export default {
                     const channel = client.channels.cache.get(config.leaderboardChannelId) as TextChannel;
                     if (!channel) continue;
 
-                    const users = await User.find({ optIn: true }).sort({ 'statsCache.winrate': -1 }).limit(1);
+                    const users = await User.find({ optedIn: true }).sort({ 'statsCache.winrate': -1 }).limit(1);
                     const topPos = users[0];
 
                     if (topPos) {
