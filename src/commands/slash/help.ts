@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, StringSelectMenuBuilder, ComponentType , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, StringSelectMenuBuilder, ComponentType, MessageFlags } from 'discord.js';
 import { createFunEmbed } from '../../utils/embed';
 import { featureFlags } from '../../config/featureFlags';
 
@@ -51,7 +51,7 @@ export default {
 
         const response = await interaction.reply({ embeds: [embed], components: [row] });
 
-        const collector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 60000 });
+        const collector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 600000 });
 
         collector.on('collect', async i => {
             if (i.user.id !== interaction.user.id) {
