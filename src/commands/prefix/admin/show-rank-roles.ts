@@ -46,7 +46,7 @@ export default {
 
             for (const role of serverRoles) {
                 const lowName = role.name.toLowerCase();
-                if (rankData.keywords.some(kw => lowName.includes(kw))) {
+                if (rankData.keywords.some((kw: string) => lowName.includes(kw))) {
                     roleMapping[rankData.rank].push(`<@&${role.id}>`);
                 }
             }
