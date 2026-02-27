@@ -43,7 +43,7 @@ const init = async () => {
     }
     // Set a global database namespace to utilize native Mongoose DB structures 
     // relying on `guildId` inside Schemas to isolate data cleanly.
-    await (0, connection_1.connectDatabase)(env_1.env.database.mongoUri, 'academy_drix_global');
+    await (0, connection_1.connectDatabase)(env_1.env.database.mongoUri, env_1.env.database.dbName);
     // Load Handlers
     await (0, eventHandler_1.loadEvents)(client);
     await (0, commandHandler_1.loadCommands)(client);

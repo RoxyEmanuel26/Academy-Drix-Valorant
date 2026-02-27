@@ -119,7 +119,7 @@ exports.default = {
                         if (autoJoined) {
                             replyText = `Sip! <@${pendingUserId}> berhasil ditambahkan ke tim.`;
                         }
-                        await interaction.reply({ content: replyText, ephemeral: false });
+                        await interaction.reply({ content: replyText });
                         if (autoJoined && lfgPost.participants.length === 5) {
                             const mentions = lfgPost.participants.map((id) => `<@${id}>`).join(' ');
                             if (interaction.channel && 'send' in interaction.channel) {

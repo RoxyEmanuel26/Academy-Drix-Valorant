@@ -16,7 +16,7 @@
  * ---------------------------------------------------------------------
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, Role , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, Role, MessageFlags } from 'discord.js';
 import { featureFlags } from '../../../config/featureFlags';
 import { VALORANT_RANKS } from '../../../utils/rankDetector';
 import { createFunEmbed } from '../../../utils/embed';
@@ -53,7 +53,7 @@ export default {
             return interaction.reply({ content: '⏳ Tunggu sebentar! Kamu baru saja klaim role rank. Coba lagi dalam 5 detik.', flags: MessageFlags.Ephemeral });
         }
 
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
 
         const selectedRankValue = interaction.options.getString('rank', true);
         const rankData = VALORANT_RANKS.find(r => r.rank.toLowerCase() === selectedRankValue);
