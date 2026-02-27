@@ -50,10 +50,12 @@ export default {
         // Extracted Note logic (this command doesn't provide buttons, pure note provided mostly)
         let rankDisplay = '-';
         let cleanNote = note;
-        const rankMatch = note.match(/^\[(.*?)\] (.*)/);
-        if (rankMatch) {
-            rankDisplay = rankMatch[1];
-            cleanNote = rankMatch[2];
+        if (cleanNote) {
+            const rankMatch = cleanNote.match(/^\[(.*?)\]\s?(.*)/);
+            if (rankMatch) {
+                rankDisplay = rankMatch[1];
+                cleanNote = rankMatch[2];
+            }
         }
 
         // Build formatted participants list with dynamic roles

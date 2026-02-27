@@ -41,18 +41,19 @@ export default {
                 let lfgId = '';
                 let pendingUserId = '';
 
-                if (action === 'masih') {
-                    // ID format: lfg_masih_userId_lfgId
-                    const parts = interaction.customId.split('_');
-                    if (parts.length >= 4) {
-                        pendingUserId = parts[2];
-                        lfgId = parts.slice(3).join('_');
-                    } else {
-                        lfgId = interaction.customId.replace(`lfg_masih_`, '');
-                    }
+                // ID format: lfg_masih_userId_lfgId or lfg_telat_userId_lfgId_targetMessageId
+                let targetMessageId = '';
+                const parts = interaction.customId.split('_');
+
+                if (action === 'masih' && parts.length >= 4) {
+                    pendingUserId = parts[2];
+                    lfgId = parts.slice(3).join('_');
+                } else if (action === 'telat' && parts.length >= 5) {
+                    pendingUserId = parts[2];
+                    lfgId = parts[3];
+                    targetMessageId = parts[4];
                 } else {
-                    // ID format: lfg_telat_lfgId
-                    lfgId = interaction.customId.replace(`lfg_telat_`, '');
+                    lfgId = interaction.customId.replace(`lfg_${action}_`, '');
                 }
 
                 try {
@@ -106,13 +107,15 @@ export default {
                                         }
                                     }
 
-                                    // Extract rank from note field or provide fallback (Fallback handles legacy posts without ranks)
+                                    // Extract rank from note field or provide fallback
                                     let rankDisplay = '-';
-                                    let cleanNote = lfgPost.note;
-                                    const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
-                                    if (rankMatch) {
-                                        rankDisplay = rankMatch[1];
-                                        cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                                    let cleanNote = lfgPost.note || '';
+                                    if (cleanNote) {
+                                        const rankMatch = cleanNote.match(/^\[(.*?)\]\s?(.*)/);
+                                        if (rankMatch) {
+                                            rankDisplay = rankMatch[1];
+                                            cleanNote = rankMatch[2]; // Using clean note so embed places rank distinctively
+                                        }
                                     }
 
                                     const newEmbed = createLfgEmbed(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined))
@@ -165,13 +168,15 @@ export default {
                                     }
                                 }
 
-                                // Extract rank from note field or provide fallback (Fallback handles legacy posts without ranks)
+                                // Extract rank from note field or provide fallback
                                 let rankDisplay = '-';
-                                let cleanNote = lfgPost.note;
-                                const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
-                                if (rankMatch) {
-                                    rankDisplay = rankMatch[1];
-                                    cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                                let cleanNote = lfgPost.note || '';
+                                if (cleanNote) {
+                                    const rankMatch = cleanNote.match(/^\[(.*?)\]\s?(.*)/);
+                                    if (rankMatch) {
+                                        rankDisplay = rankMatch[1];
+                                        cleanNote = rankMatch[2]; // Using clean note so embed places rank distinctively
+                                    }
                                 }
 
                                 const newEmbed = createLfgEmbed(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined), true)
@@ -183,7 +188,31 @@ export default {
                         }
 
                         await interaction.message.delete().catch(() => { });
-                        await interaction.reply({ content: 'Oke, Party ini ditandai sebagai batal / telat. 🛑', flags: MessageFlags.Ephemeral });
+
+                        let repliedToJoiningUser = false;
+                        if (pendingUserId && targetMessageId && interaction.channel) {
+                            try {
+                                const targetMsg = await interaction.channel.messages.fetch(targetMessageId);
+                                if (targetMsg) {
+                                    await targetMsg.reply({ content: `Haloo <@${pendingUserId}>, Yahh partynya sudah tutup atau kamu yang telat wkwkw 🛑 coba bikin baru aja yaa` });
+                                    repliedToJoiningUser = true;
+                                }
+                            } catch (e) {
+                                console.error('Failed to reply to joining user message', e);
+                            }
+                        }
+
+                        if (!repliedToJoiningUser) {
+                            if (interaction.channel && 'send' in interaction.channel) {
+                                if (pendingUserId) {
+                                    await interaction.channel.send({ content: `<@${pendingUserId}> Oke, Yahh partynya sudah tutup atau kamu yang telat wkwkw 🛑` }).catch(() => { });
+                                } else {
+                                    await interaction.channel.send({ content: 'Oke, Yahh partynya sudah tutup atau kamu yang telat wkwkw 🛑' }).catch(() => { });
+                                }
+                            }
+                        }
+
+                        await interaction.deferUpdate().catch(() => { }); // Ack interaction silently
                     }
                 } catch (err) {
                     console.error('LFG Timeout Button Error:', err);

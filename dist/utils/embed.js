@@ -37,18 +37,26 @@ exports.createErrorEmbed = createErrorEmbed;
 const createLfgEmbed = (mode, note, formattedParticipants, // Use pre-formatted strings to allow role injecting
 rankDisplay, // User's selected rank display
 voiceChannelId, isTimeout = false) => {
-    let playersList = '';
-    for (let i = 0; i < 5; i++) {
-        if (formattedParticipants[i]) {
-            playersList += `${formattedParticipants[i]}\n`;
-        }
-        else {
-            playersList += `Open -\n`;
-        }
-    }
     // Determine count based on actual valid strings
     const participantCount = formattedParticipants.filter(p => p !== undefined && p !== null).length;
     const isFull = participantCount >= 5;
+    let playersList = '';
+    for (let i = 0; i < 5; i++) {
+        if (formattedParticipants[i]) {
+            playersList += `${i + 1}. ${formattedParticipants[i]}\n`;
+        }
+        else {
+            if (isTimeout) {
+                playersList += `${i + 1}. -[TIMEOUT]-\n`;
+            }
+            else if (isFull) {
+                playersList += `${i + 1}. -[FULL]-\n`;
+            }
+            else {
+                playersList += `${i + 1}. -[OPEN]-\n`;
+            }
+        }
+    }
     let embedTitle = `🎮 Looking For Party: ${mode} ${isFull ? '[FULL]' : ''}`;
     if (isTimeout) {
         embedTitle = `[TIMEOUT] Looking For Party: ${mode}`;

@@ -37,20 +37,20 @@ exports.default = {
                 // Parsing dynamic ID format
                 let lfgId = '';
                 let pendingUserId = '';
-                if (action === 'masih') {
-                    // ID format: lfg_masih_userId_lfgId
-                    const parts = interaction.customId.split('_');
-                    if (parts.length >= 4) {
-                        pendingUserId = parts[2];
-                        lfgId = parts.slice(3).join('_');
-                    }
-                    else {
-                        lfgId = interaction.customId.replace(`lfg_masih_`, '');
-                    }
+                // ID format: lfg_masih_userId_lfgId or lfg_telat_userId_lfgId_targetMessageId
+                let targetMessageId = '';
+                const parts = interaction.customId.split('_');
+                if (action === 'masih' && parts.length >= 4) {
+                    pendingUserId = parts[2];
+                    lfgId = parts.slice(3).join('_');
+                }
+                else if (action === 'telat' && parts.length >= 5) {
+                    pendingUserId = parts[2];
+                    lfgId = parts[3];
+                    targetMessageId = parts[4];
                 }
                 else {
-                    // ID format: lfg_telat_lfgId
-                    lfgId = interaction.customId.replace(`lfg_telat_`, '');
+                    lfgId = interaction.customId.replace(`lfg_${action}_`, '');
                 }
                 try {
                     const lfgPost = await LfgPost_1.LfgPost.findById(lfgId);
@@ -97,13 +97,15 @@ exports.default = {
                                             formattedParticipants.push(`<@${pid}>`);
                                         }
                                     }
-                                    // Extract rank from note field or provide fallback (Fallback handles legacy posts without ranks)
+                                    // Extract rank from note field or provide fallback
                                     let rankDisplay = '-';
-                                    let cleanNote = lfgPost.note;
-                                    const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
-                                    if (rankMatch) {
-                                        rankDisplay = rankMatch[1];
-                                        cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                                    let cleanNote = lfgPost.note || '';
+                                    if (cleanNote) {
+                                        const rankMatch = cleanNote.match(/^\[(.*?)\]\s?(.*)/);
+                                        if (rankMatch) {
+                                            rankDisplay = rankMatch[1];
+                                            cleanNote = rankMatch[2]; // Using clean note so embed places rank distinctively
+                                        }
                                     }
                                     const newEmbed = (0, embed_1.createLfgEmbed)(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined))
                                         .setThumbnail(originalMessage.embeds[0]?.thumbnail?.url || interaction.user.displayAvatarURL());
@@ -152,13 +154,15 @@ exports.default = {
                                         formattedParticipants.push(`<@${pid}>`);
                                     }
                                 }
-                                // Extract rank from note field or provide fallback (Fallback handles legacy posts without ranks)
+                                // Extract rank from note field or provide fallback
                                 let rankDisplay = '-';
-                                let cleanNote = lfgPost.note;
-                                const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
-                                if (rankMatch) {
-                                    rankDisplay = rankMatch[1];
-                                    cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                                let cleanNote = lfgPost.note || '';
+                                if (cleanNote) {
+                                    const rankMatch = cleanNote.match(/^\[(.*?)\]\s?(.*)/);
+                                    if (rankMatch) {
+                                        rankDisplay = rankMatch[1];
+                                        cleanNote = rankMatch[2]; // Using clean note so embed places rank distinctively
+                                    }
                                 }
                                 const newEmbed = (0, embed_1.createLfgEmbed)(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined), true)
                                     .setThumbnail(originalMessage.embeds[0]?.thumbnail?.url || interaction.user.displayAvatarURL());
@@ -169,7 +173,30 @@ exports.default = {
                             console.error('Failed to update timed out LFG embed:', e);
                         }
                         await interaction.message.delete().catch(() => { });
-                        await interaction.reply({ content: 'Oke, Party ini ditandai sebagai batal / telat. 🛑', flags: discord_js_1.MessageFlags.Ephemeral });
+                        let repliedToJoiningUser = false;
+                        if (pendingUserId && targetMessageId && interaction.channel) {
+                            try {
+                                const targetMsg = await interaction.channel.messages.fetch(targetMessageId);
+                                if (targetMsg) {
+                                    await targetMsg.reply({ content: `Oke <@${pendingUserId}>, Party ini sudah ditandai sebagai batal / telat. 🛑` });
+                                    repliedToJoiningUser = true;
+                                }
+                            }
+                            catch (e) {
+                                console.error('Failed to reply to joining user message', e);
+                            }
+                        }
+                        if (!repliedToJoiningUser) {
+                            if (interaction.channel && 'send' in interaction.channel) {
+                                if (pendingUserId) {
+                                    await interaction.channel.send({ content: `<@${pendingUserId}> Oke, Party ini ditandai sebagai batal / telat. 🛑` }).catch(() => { });
+                                }
+                                else {
+                                    await interaction.channel.send({ content: 'Oke, Party ini ditandai sebagai batal / telat. 🛑' }).catch(() => { });
+                                }
+                            }
+                        }
+                        await interaction.deferUpdate().catch(() => { }); // Ack interaction silently
                     }
                 }
                 catch (err) {

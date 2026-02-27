@@ -131,7 +131,7 @@ export default {
                     messageId: promptMessage.id,
                     ownerId: interaction.user.id,
                     mode,
-                    note: note, // note no longer contains rank prefix
+                    note: `[${rankDisplay}] ${note}`,
                     active: true,
                     participants,
                     voiceChannelId,

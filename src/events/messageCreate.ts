@@ -88,7 +88,7 @@ export default {
                                 .setLabel('Masih')
                                 .setStyle(ButtonStyle.Success),
                             new ButtonBuilder()
-                                .setCustomId(`lfg_telat_${lfgPost._id}`)
+                                .setCustomId(`lfg_telat_${userId}_${lfgPost._id}_${message.id}`)
                                 .setLabel('Telat')
                                 .setStyle(ButtonStyle.Danger)
                         );
@@ -141,11 +141,13 @@ export default {
 
                         // Extract rank from note field or provide fallback
                         let rankDisplay = '-';
-                        let cleanNote = lfgPost.note;
-                        const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
-                        if (rankMatch) {
-                            rankDisplay = rankMatch[1];
-                            cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                        let cleanNote = lfgPost.note || '';
+                        if (cleanNote) {
+                            const rankMatch = cleanNote.match(/^\[(.*?)\]\s?(.*)/);
+                            if (rankMatch) {
+                                rankDisplay = rankMatch[1];
+                                cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                            }
                         }
 
                         const newEmbed = createLfgEmbed(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined))

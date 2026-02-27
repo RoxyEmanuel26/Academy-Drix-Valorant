@@ -80,7 +80,7 @@ exports.default = {
                         .setCustomId(`lfg_masih_${userId}_${lfgPost._id}`)
                         .setLabel('Masih')
                         .setStyle(discord_js_2.ButtonStyle.Success), new discord_js_2.ButtonBuilder()
-                        .setCustomId(`lfg_telat_${lfgPost._id}`)
+                        .setCustomId(`lfg_telat_${userId}_${lfgPost._id}_${message.id}`)
                         .setLabel('Telat')
                         .setStyle(discord_js_2.ButtonStyle.Danger));
                     if ('send' in message.channel) {
@@ -126,11 +126,13 @@ exports.default = {
                         }
                         // Extract rank from note field or provide fallback
                         let rankDisplay = '-';
-                        let cleanNote = lfgPost.note;
-                        const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
-                        if (rankMatch) {
-                            rankDisplay = rankMatch[1];
-                            cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                        let cleanNote = lfgPost.note || '';
+                        if (cleanNote) {
+                            const rankMatch = cleanNote.match(/^\[(.*?)\]\s?(.*)/);
+                            if (rankMatch) {
+                                rankDisplay = rankMatch[1];
+                                cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                            }
                         }
                         const newEmbed = (0, embed_1.createLfgEmbed)(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined))
                             .setThumbnail(originalMessage.embeds[0]?.thumbnail?.url || message.author.displayAvatarURL());

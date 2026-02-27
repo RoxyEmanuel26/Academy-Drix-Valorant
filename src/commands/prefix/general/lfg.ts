@@ -149,7 +149,7 @@ export default {
                         messageId: replyId,
                         ownerId: message.author.id,
                         mode: selectedMode,
-                        note: note, // note no longer contains rank prefix, it's pure note
+                        note: `[${rankDisplay}] ${note}`,
                         active: true,
                         participants,
                         voiceChannelId,
