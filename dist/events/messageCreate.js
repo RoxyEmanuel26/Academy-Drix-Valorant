@@ -22,6 +22,7 @@ const GuildConfig_1 = require("../database/models/GuildConfig");
 const LfgPost_1 = require("../database/models/LfgPost");
 const embed_1 = require("../utils/embed");
 const discord_js_2 = require("discord.js");
+const rankDetector_1 = require("../utils/rankDetector");
 const env_1 = require("../config/env");
 const introParser_1 = require("../utils/introParser");
 exports.default = {
@@ -106,7 +107,32 @@ exports.default = {
                 try {
                     const originalMessage = await message.channel.messages.fetch(lfgPost.messageId);
                     if (originalMessage) {
-                        const newEmbed = (0, embed_1.createLfgEmbed)(lfgPost.mode, lfgPost.note, lfgPost.participants, lfgPost.voiceChannelId)
+                        // Build formatted participants list with dynamic roles
+                        const formattedParticipants = [];
+                        for (const pid of lfgPost.participants) {
+                            try {
+                                const pMember = await message.guild?.members.fetch(pid);
+                                if (pMember) {
+                                    const pRank = (0, rankDetector_1.detectRankFromRoles)(pMember.roles.cache);
+                                    formattedParticipants.push(`<@${pid}> (${pRank.emoji} ${pRank.rank})`);
+                                }
+                                else {
+                                    formattedParticipants.push(`<@${pid}>`);
+                                }
+                            }
+                            catch {
+                                formattedParticipants.push(`<@${pid}>`);
+                            }
+                        }
+                        // Extract rank from note field or provide fallback
+                        let rankDisplay = '-';
+                        let cleanNote = lfgPost.note;
+                        const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
+                        if (rankMatch) {
+                            rankDisplay = rankMatch[1];
+                            cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                        }
+                        const newEmbed = (0, embed_1.createLfgEmbed)(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined))
                             .setThumbnail(originalMessage.embeds[0]?.thumbnail?.url || message.author.displayAvatarURL());
                         await originalMessage.edit({ embeds: [newEmbed] });
                     }

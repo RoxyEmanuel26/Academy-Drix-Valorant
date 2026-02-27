@@ -17,11 +17,12 @@
  */
 
 
-import { Events, Interaction , MessageFlags } from 'discord.js';
+import { Events, Interaction, MessageFlags } from 'discord.js';
 import { User } from '../database/models/User';
 import { LfgPost } from '../database/models/LfgPost';
 import { createLfgEmbed, createFunEmbed } from '../utils/embed';
 import { agentEmojiHints } from '../data/valorant';
+import { detectRankFromRoles } from '../utils/rankDetector';
 
 function sanitizeAgent(name: string): string {
     return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
@@ -89,7 +90,32 @@ export default {
                             try {
                                 const originalMessage = await interaction.channel?.messages.fetch(lfgPost.messageId);
                                 if (originalMessage) {
-                                    const newEmbed = createLfgEmbed(lfgPost.mode, lfgPost.note, lfgPost.participants, lfgPost.voiceChannelId)
+                                    // Build formatted participants list with dynamic roles
+                                    const formattedParticipants: string[] = [];
+                                    for (const pid of lfgPost.participants) {
+                                        try {
+                                            const pMember = await interaction.guild?.members.fetch(pid);
+                                            if (pMember) {
+                                                const pRank = detectRankFromRoles(pMember.roles.cache);
+                                                formattedParticipants.push(`<@${pid}> (${pRank.emoji} ${pRank.rank})`);
+                                            } else {
+                                                formattedParticipants.push(`<@${pid}>`);
+                                            }
+                                        } catch {
+                                            formattedParticipants.push(`<@${pid}>`);
+                                        }
+                                    }
+
+                                    // Extract rank from note field or provide fallback (Fallback handles legacy posts without ranks)
+                                    let rankDisplay = '-';
+                                    let cleanNote = lfgPost.note;
+                                    const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
+                                    if (rankMatch) {
+                                        rankDisplay = rankMatch[1];
+                                        cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                                    }
+
+                                    const newEmbed = createLfgEmbed(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined))
                                         .setThumbnail(originalMessage.embeds[0]?.thumbnail?.url || interaction.user.displayAvatarURL());
                                     await originalMessage.edit({ embeds: [newEmbed] });
                                 }
@@ -123,7 +149,32 @@ export default {
                         try {
                             const originalMessage = await interaction.channel?.messages.fetch(lfgPost.messageId);
                             if (originalMessage) {
-                                const newEmbed = createLfgEmbed(lfgPost.mode, lfgPost.note, lfgPost.participants, lfgPost.voiceChannelId, true)
+                                // Build formatted participants list with dynamic roles
+                                const formattedParticipants: string[] = [];
+                                for (const pid of lfgPost.participants) {
+                                    try {
+                                        const pMember = await interaction.guild?.members.fetch(pid);
+                                        if (pMember) {
+                                            const pRank = detectRankFromRoles(pMember.roles.cache);
+                                            formattedParticipants.push(`<@${pid}> (${pRank.emoji} ${pRank.rank})`);
+                                        } else {
+                                            formattedParticipants.push(`<@${pid}>`);
+                                        }
+                                    } catch {
+                                        formattedParticipants.push(`<@${pid}>`);
+                                    }
+                                }
+
+                                // Extract rank from note field or provide fallback (Fallback handles legacy posts without ranks)
+                                let rankDisplay = '-';
+                                let cleanNote = lfgPost.note;
+                                const rankMatch = lfgPost.note.match(/^\[(.*?)\] (.*)/);
+                                if (rankMatch) {
+                                    rankDisplay = rankMatch[1];
+                                    cleanNote = rankMatch[2]; // Using clean note so embed logic places rank distinctively
+                                }
+
+                                const newEmbed = createLfgEmbed(lfgPost.mode, cleanNote, formattedParticipants, rankDisplay, (lfgPost.voiceChannelId || undefined), true)
                                     .setThumbnail(originalMessage.embeds[0]?.thumbnail?.url || interaction.user.displayAvatarURL());
                                 await originalMessage.edit({ embeds: [newEmbed] });
                             }

@@ -70,7 +70,8 @@ export default {
                 rankName: rank,
                 domicile: userDb?.domicile || '-',
                 joinDate: joinDate,
-                avatarUrl: targetUser.displayAvatarURL({ extension: 'png', size: 256 })
+                avatarUrl: targetUser.displayAvatarURL({ extension: 'png', size: 256 }),
+                mainAgent: userDb?.mainAgent
             });
 
             await waitMsg.edit({ content: null, files: [attachment] });

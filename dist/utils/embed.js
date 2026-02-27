@@ -34,17 +34,21 @@ const createErrorEmbed = (description) => {
         .setColor('#ff0000');
 };
 exports.createErrorEmbed = createErrorEmbed;
-const createLfgEmbed = (mode, note, participants, voiceChannelId, isTimeout = false) => {
+const createLfgEmbed = (mode, note, formattedParticipants, // Use pre-formatted strings to allow role injecting
+rankDisplay, // User's selected rank display
+voiceChannelId, isTimeout = false) => {
     let playersList = '';
     for (let i = 0; i < 5; i++) {
-        if (participants[i]) {
-            playersList += `${i + 1}. <@${participants[i]}>\n`;
+        if (formattedParticipants[i]) {
+            playersList += `${formattedParticipants[i]}\n`;
         }
         else {
-            playersList += `${i + 1}. ${isTimeout ? '- Timeout -' : '- Open -'}\n`;
+            playersList += `Open -\n`;
         }
     }
-    const isFull = participants.length >= 5;
+    // Determine count based on actual valid strings
+    const participantCount = formattedParticipants.filter(p => p !== undefined && p !== null).length;
+    const isFull = participantCount >= 5;
     let embedTitle = `🎮 Looking For Party: ${mode} ${isFull ? '[FULL]' : ''}`;
     if (isTimeout) {
         embedTitle = `[TIMEOUT] Looking For Party: ${mode}`;
@@ -53,7 +57,7 @@ const createLfgEmbed = (mode, note, participants, voiceChannelId, isTimeout = fa
     if (voiceChannelId) {
         voiceJoinText = `*balas pesan ini jika ingin ikut!*\n*Join voice channel <#${voiceChannelId}>*`;
     }
-    const embedDesc = `**Mode:** ${mode}\n**Catatan:** ${note}\n\n${isTimeout ? '*Pencarian Party ini sudah melebihi batas waktu!*' : (isFull ? '*Team sudah penuh!*' : voiceJoinText)}\n\n**Daftar Pemain:**\n${playersList}`;
+    const embedDesc = `**Mode:** ${mode}\n**Rank:** ${rankDisplay}\n**Catatan:** ${note}\n\n${isTimeout ? '*Pencarian Party ini sudah melebihi batas waktu!*' : (isFull ? '*Team sudah penuh!*' : voiceJoinText)}\n\n**Daftar Pemain:**\n${playersList}`;
     let embedColor = '#ff4655'; // Default Valorant Red
     if (isFull || isTimeout) {
         embedColor = '#aaaaaa'; // Gray out if full or timeout

@@ -21,10 +21,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loadCommands = void 0;
-const discord_js_1 = require("discord.js");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const env_1 = require("../config/env");
 const loadCommands = async (client) => {
     const slashCommandsToRegister = [];
     // Helper function to recursively get all files
@@ -64,29 +62,7 @@ const loadCommands = async (client) => {
             }
         }
     }
-    // Register Slash Commands
-    if (env_1.env.discord.token && env_1.env.discord.clientId && slashCommandsToRegister.length > 0) {
-        const rest = new discord_js_1.REST({ version: '10' }).setToken(env_1.env.discord.token);
-        try {
-            console.log('Started refreshing application (/) commands.');
-            if (env_1.env.discord.guildId) {
-                // Determine if we have multiple comma-separated guild IDs
-                const guildIds = env_1.env.discord.guildId.split(',').map(id => id.trim()).filter(id => id.length > 0);
-                for (const guildId of guildIds) {
-                    console.log(`Refreshing commands for Guild ID: ${guildId}`);
-                    await rest.put(discord_js_1.Routes.applicationGuildCommands(env_1.env.discord.clientId, guildId), { body: slashCommandsToRegister });
-                }
-            }
-            else {
-                // Global commands
-                console.log(`Refreshing global commands...`);
-                await rest.put(discord_js_1.Routes.applicationCommands(env_1.env.discord.clientId), { body: slashCommandsToRegister });
-            }
-            console.log('Successfully reloaded application (/) commands.');
-        }
-        catch (error) {
-            console.error('Error registering slash commands:', error);
-        }
-    }
+    // Registering Slash Commands happens in a separate manual script: src/scripts/deploy-commands.ts
+    // to prevent hitting Discord's API rate limits directly during rapid Node bot restarts.
 };
 exports.loadCommands = loadCommands;

@@ -24,6 +24,7 @@ import { GamePoints } from '../../../database/models/GamePoints';
 import { Badge } from '../../../database/models/Badge';
 import { getMemberRank } from '../../../utils/rankDetector';
 import { agentEmojiHints } from '../../../data/valorant';
+import { generateProfileCard } from '../../../utils/imageGenerator';
 
 const cooldowns = new Map<string, number>();
 
@@ -145,7 +146,35 @@ export default {
             embed.setThumbnail(targetUser.displayAvatarURL({ size: 256 }));
             embed.setFooter({ text: `Member sejak: ${targetMember.joinedAt?.toLocaleDateString('id-ID')}` });
 
-            await waitMsg.edit({ content: null, embeds: [embed] });
+            const files = [];
+
+            const isRiotApiReady = process.env.RIOT_RSO_ENABLED === 'true' && process.env.RIOT_API_KEY_TYPE === 'production';
+            if (isRiotApiReady && userDb?.optedIn) {
+                let gender = '-';
+                const roleNames = targetMember.roles.cache.map(r => r.name.toLowerCase());
+                if (roleNames.some(r => r.includes('prince') && !r.includes('princess'))) gender = 'Laki Laki';
+                else if (roleNames.some(r => r.includes('princess'))) gender = 'Perempuan';
+
+                const joinDate = targetMember.joinedAt
+                    ? targetMember.joinedAt.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+                    : '-';
+
+                const attachment = await generateProfileCard({
+                    discordId: targetUser.id,
+                    username: targetMember.displayName || targetUser.username,
+                    gender: gender,
+                    rankName: rank,
+                    domicile: userDb?.domicile || '-',
+                    joinDate: joinDate,
+                    avatarUrl: targetUser.displayAvatarURL({ extension: 'png', size: 256 }),
+                    mainAgent: userDb?.mainAgent
+                });
+
+                embed.setImage('attachment://profile-card.png');
+                files.push(attachment);
+            }
+
+            await waitMsg.edit({ content: null, embeds: [embed], files: files });
 
         } catch (error) {
             console.error('[Profile Card Prefix]', error);

@@ -26,7 +26,11 @@ const userSchema = new mongoose_1.Schema({
     riotTagLine: { type: String },
     region: { type: String, default: 'ap' },
     linkedAt: { type: Date },
-    optIn: { type: Boolean, default: false },
+    optedIn: { type: Boolean, default: false },
+    accessToken: { type: String },
+    refreshToken: { type: String },
+    tokenExpiry: { type: Number },
+    lastUpdated: { type: Date },
     statsCache: {
         rank: String,
         totalWins: Number,

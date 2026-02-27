@@ -20,28 +20,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const User_1 = require("../../database/models/User");
 const embed_1 = require("../../utils/embed");
-const featureFlags_1 = require("../../config/featureFlags");
-const env_1 = require("../../config/env");
+const featureGuard_1 = require("../../utils/featureGuard");
+const tokenManager_1 = require("../../utils/tokenManager");
 exports.default = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('lastmatch')
         .setDescription('Lihat info match VALORANT terakhir kamu.'),
     async execute(interaction) {
-        if (!(0, featureFlags_1.isFeatureEnabled)('valorantStats')) {
-            return interaction.reply({ content: 'Fitur last match sedang dinonaktifkan oleh admin.', flags: discord_js_1.MessageFlags.Ephemeral });
-        }
-        if (!env_1.env.riot.apiKey || !env_1.env.riot.rso.clientId || !env_1.env.riot.rso.clientSecret || !env_1.env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')], flags: discord_js_1.MessageFlags.Ephemeral });
+        const guard = (0, featureGuard_1.featureGuard)('MATCH_HISTORY');
+        if (!guard.allowed) {
+            return interaction.reply({ content: guard.reason, flags: discord_js_1.MessageFlags.Ephemeral });
         }
         await interaction.deferReply();
-        const user = await User_1.User.findOne({ discordId: interaction.user.id });
-        if (!user || !user.optIn || !user.riotPuuid) {
-            return interaction.followUp({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot! `/link`')] });
+        const accessToken = await (0, tokenManager_1.getValidAccessToken)(interaction.user.id);
+        if (!accessToken) {
+            return interaction.followUp({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `/link-account` untuk menghubungkan akun Riot kamu terlebih dahulu sebelum menggunakan fitur ini.')] });
         }
+        const user = await User_1.User.findOne({ discordId: interaction.user.id });
+        if (!user)
+            return;
         try {
             // Note: Actual implementation would fetch from `getMatchHistory` and then `getMatchDetails`
-            // For showcase, we simulate the output result:
-            const embed = (0, embed_1.createFunEmbed)(`🕹️ Last Match: ${user.riotGameName}`, `**Map:** Ascent\n**Agent:** Jett\n**KDA:** 20/15/5\n**Hasil:** VICTORY 🎉\n\n*Wah, ternyata kamu lumayan jago bawa Jett kemarin!*`);
+            // For showcase, we simulate the output result with anonymization
+            const embed = (0, embed_1.createFunEmbed)(`🕹️ Last Match: ${user.riotGameName}`, `**Map:** Ascent\n**Info:** Jett (Kamu) | Omen (Anonymous) | Sage (Anonymous)\n**KDA:** 20/15/5\n**Hasil:** VICTORY 🎉\n\n*Statistik ini menampilkan namamu saja karena privasi rekan tim diutamakan.*`);
             await interaction.followUp({ embeds: [embed] });
         }
         catch (error) {

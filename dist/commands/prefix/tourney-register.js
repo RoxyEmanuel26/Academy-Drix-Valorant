@@ -27,8 +27,8 @@ exports.default = {
         if (!message.guildId)
             return;
         const user = await User_1.User.findOne({ discordId: message.author.id });
-        if (!user || !user.optIn)
-            return message.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu wajib connect akun menggunakan `!link` sebelum ikut turnamen!')] });
+        if (!user || !user.optedIn)
+            return message.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu wajib connect akun menggunakan `!link-account` sebelum ikut turnamen!')] });
         const tourney = await Tournament_1.Tournament.findOne({ guildId: message.guildId, status: 'upcoming' });
         if (!tourney)
             return message.reply({ embeds: [(0, embed_1.createErrorEmbed)('Tidak ada turnamen yang open registration saat ini.')] });

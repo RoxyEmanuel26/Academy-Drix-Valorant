@@ -37,7 +37,7 @@ exports.default = {
                     const channel = client.channels.cache.get(config.leaderboardChannelId);
                     if (!channel)
                         continue;
-                    const users = await User_1.User.find({ optIn: true }).sort({ 'statsCache.winrate': -1 }).limit(1);
+                    const users = await User_1.User.find({ optedIn: true }).sort({ 'statsCache.winrate': -1 }).limit(1);
                     const topPos = users[0];
                     if (topPos) {
                         const embed = (0, embed_1.createFunEmbed)('🗓️ Weekly Recap Academy!', `**Top Player Minggu Ini:** ${topPos.riotGameName}#${topPos.riotTagLine} dengan Winrate ${topPos.statsCache?.winrate || 0}%!\n\nMain terus & pantau leaderboard!`);

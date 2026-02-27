@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, MessageFlags } from 'discord.js';
 
 export const totQuestions = [
     { title: "Lebih OP mana?", a: "Vandal", b: "Phantom" },
@@ -56,7 +56,8 @@ export default {
             .setDescription(`**${item.title}**\n\n🟩 **A.** ${item.a}\n\n🟩 **B.** ${item.b}`)
             .setFooter({ text: 'Waktu voting cuma 30 detik! Gasss!' });
 
-        const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+        await interaction.reply({ embeds: [embed], components: [row] });
+        const message = await interaction.fetchReply();
 
         const collector = message.createMessageComponentCollector({
             componentType: ComponentType.Button,

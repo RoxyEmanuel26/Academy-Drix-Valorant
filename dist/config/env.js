@@ -39,10 +39,21 @@ exports.env = {
     },
     riot: {
         apiKey: process.env.RIOT_API_KEY || '',
+        apiKeyType: process.env.RIOT_API_KEY_TYPE || 'development',
+        rsoEnabled: process.env.RIOT_RSO_ENABLED === 'true',
         rso: {
             clientId: process.env.RIOT_RSO_CLIENT_ID || '',
             clientSecret: process.env.RIOT_RSO_CLIENT_SECRET || '',
             redirectUri: process.env.RIOT_RSO_REDIRECT_URI || '',
         },
+        features: {
+            linkAccount: process.env.FEATURE_LINK_ACCOUNT === 'true',
+            profile: process.env.FEATURE_PROFILE === 'true',
+            rank: process.env.FEATURE_RANK === 'true',
+            stats: process.env.FEATURE_STATS === 'true',
+            matchHistory: process.env.FEATURE_MATCH_HISTORY === 'true',
+            leaderboardApi: process.env.FEATURE_LEADERBOARD_API === 'true',
+            leaderboardRole: process.env.FEATURE_LEADERBOARD_ROLE === 'true',
+        }
     },
 };

@@ -12,6 +12,7 @@
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import { GuildMember, User as DiscordUser, AttachmentBuilder } from 'discord.js';
 import path from 'path';
+import { getCharacterFullImagePathByName } from './assetManager';
 
 // Register the custom font globally once
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'assets', 'Puffberry.ttf'), 'Puffberry');
@@ -25,6 +26,7 @@ export interface IDCardData {
     domicile: string;
     joinDate: string;
     avatarUrl: string;
+    mainAgent?: string;
 }
 
 export async function generateProfileCard(data: IDCardData): Promise<AttachmentBuilder> {
@@ -78,6 +80,29 @@ export async function generateProfileCard(data: IDCardData): Promise<AttachmentB
     ctx.fillText(data.domicile, valueX, startY + lineHeight * 2);
     ctx.fillText(data.gender, valueX, startY + lineHeight * 3);
     ctx.fillText(data.rankName, valueX, startY + lineHeight * 4);
+
+    // 3.5 Draw Character (Main Agent)
+    if (data.mainAgent) {
+        const charImgPath = getCharacterFullImagePathByName(data.mainAgent);
+        if (charImgPath) {
+            try {
+                const charImg = await loadImage(charImgPath);
+                // The character image is usually tall and wide, we want to place it on the right side behind the avatar
+                // Canvas is 800x450. Avatar is at 540, 140.
+                // Let's place the character spanning the right side
+                // Calculate scale to fit height ~400
+                const scale = 450 / charImg.height;
+                const cw = charImg.width * scale;
+                const ch = charImg.height * scale;
+                ctx.globalAlpha = 0.85; // Slightly transparent to blend 
+                // Draw it at right edge
+                ctx.drawImage(charImg, 800 - cw + 100, 450 - ch, cw, ch);
+                ctx.globalAlpha = 1.0;
+            } catch (e) {
+                console.error('Failed to load character image', e);
+            }
+        }
+    }
 
     // 4. Draw Avatar (Right Side block)
     const avatarSize = 200;

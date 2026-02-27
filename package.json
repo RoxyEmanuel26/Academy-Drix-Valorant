@@ -8,7 +8,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "deploy-commands": "ts-node src/scripts/deploy-commands.ts"
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.95",

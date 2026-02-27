@@ -21,6 +21,7 @@ const discord_js_1 = require("discord.js");
 const LfgPost_1 = require("../../database/models/LfgPost");
 const GuildConfig_1 = require("../../database/models/GuildConfig");
 const embed_1 = require("../../utils/embed");
+const rankDetector_1 = require("../../utils/rankDetector");
 exports.default = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('lfg')
@@ -45,20 +46,86 @@ exports.default = {
         const member = interaction.member;
         const voiceChannelId = member.voice.channelId || undefined;
         const participants = [interaction.user.id];
-        const embed = (0, embed_1.createLfgEmbed)(mode, note, participants, voiceChannelId)
-            .setThumbnail(interaction.user.displayAvatarURL());
-        const roleMention = config?.valorantRoleId ? `<@&${config.valorantRoleId}>` : '@here';
-        const reply = await interaction.reply({ content: roleMention, embeds: [embed], fetchReply: true });
-        await LfgPost_1.LfgPost.create({
-            guildId: interaction.guildId,
-            messageId: reply.id,
-            ownerId: interaction.user.id,
-            mode,
-            note,
-            active: true,
-            participants,
-            voiceChannelId,
-            channelId: interaction.channelId
+        // Construct Rank Buttons
+        const row1 = new discord_js_1.ActionRowBuilder();
+        const row2 = new discord_js_1.ActionRowBuilder();
+        const reversedRanks = [...rankDetector_1.VALORANT_RANKS].reverse();
+        reversedRanks.forEach((rankData, index) => {
+            const btn = new discord_js_1.ButtonBuilder()
+                .setCustomId(`lfg_rank_${rankData.rank}`)
+                .setLabel(rankData.rank)
+                .setStyle(discord_js_1.ButtonStyle.Secondary);
+            if (rankData.emoji && rankData.emoji !== '') {
+                btn.setEmoji(rankData.emoji);
+            }
+            if (index < 5) {
+                row1.addComponents(btn);
+            }
+            else {
+                row2.addComponents(btn);
+            }
+        });
+        await interaction.reply({
+            content: `Mode **${mode}** dipilih! Sebelum mencari party, pilih Rank Kamu saat ini:`,
+            components: [row1, row2]
+        });
+        const promptMessage = await interaction.fetchReply();
+        const collector = promptMessage.createMessageComponentCollector({
+            componentType: discord_js_1.ComponentType.Button,
+            time: 60000
+        });
+        collector.on('collect', async (i) => {
+            if (i.user.id !== interaction.user.id) {
+                await i.reply({ content: 'Ini pencarian party punya orang lain!', flags: discord_js_1.MessageFlags.Ephemeral });
+                return;
+            }
+            if (i.customId.startsWith('lfg_rank_')) {
+                const selectedRank = i.customId.replace('lfg_rank_', '');
+                const rankInfo = rankDetector_1.VALORANT_RANKS.find(r => r.rank === selectedRank);
+                const rankDisplay = `${rankInfo?.emoji || ''} ${selectedRank}`;
+                // Build formatted participants list with dynamic roles
+                const formattedParticipants = [];
+                for (const pid of participants) {
+                    try {
+                        const pMember = await interaction.guild?.members.fetch(pid);
+                        if (pMember) {
+                            const pRank = (0, rankDetector_1.detectRankFromRoles)(pMember.roles.cache);
+                            formattedParticipants.push(`<@${pid}> (${pRank.emoji} ${pRank.rank})`);
+                        }
+                        else {
+                            formattedParticipants.push(`<@${pid}>`);
+                        }
+                    }
+                    catch {
+                        formattedParticipants.push(`<@${pid}>`);
+                    }
+                }
+                const embed = (0, embed_1.createLfgEmbed)(mode, note, formattedParticipants, rankDisplay, (voiceChannelId || undefined))
+                    .setThumbnail(interaction.user.displayAvatarURL());
+                const roleMention = config?.valorantRoleId ? `<@&${config.valorantRoleId}>` : '@here';
+                await i.update({
+                    content: roleMention,
+                    embeds: [embed],
+                    components: []
+                });
+                await LfgPost_1.LfgPost.create({
+                    guildId: interaction.guildId,
+                    messageId: promptMessage.id,
+                    ownerId: interaction.user.id,
+                    mode,
+                    note: note, // note no longer contains rank prefix
+                    active: true,
+                    participants,
+                    voiceChannelId,
+                    channelId: interaction.channelId
+                });
+                collector.stop('completed');
+            }
+        });
+        collector.on('end', (collected, reason) => {
+            if (reason === 'time') {
+                interaction.editReply({ content: 'Waktu memilih opsi Party telah habis.', components: [] }).catch(() => { });
+            }
         });
     },
 };

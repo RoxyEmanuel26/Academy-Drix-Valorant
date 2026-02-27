@@ -26,7 +26,7 @@ export const featureGuard = (featureName: string): GuardResult => {
 
     // Fitur RSO hanya boleh jalan dengan production key
     const rsoFeatures = [
-        'LINK_ACCOUNT', 'PROFILE', 'RANK',
+        'LINK_ACCOUNT', 'RANK',
         'STATS', 'MATCH_HISTORY', 'LEADERBOARD_API'
     ];
 

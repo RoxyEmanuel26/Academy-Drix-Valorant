@@ -66,34 +66,6 @@ export const loadCommands = async (client: Client) => {
         }
     }
 
-    // Register Slash Commands
-    if (env.discord.token && env.discord.clientId && slashCommandsToRegister.length > 0) {
-        const rest = new REST({ version: '10' }).setToken(env.discord.token);
-        try {
-            console.log('Started refreshing application (/) commands.');
-
-            if (env.discord.guildId) {
-                // Determine if we have multiple comma-separated guild IDs
-                const guildIds = env.discord.guildId.split(',').map(id => id.trim()).filter(id => id.length > 0);
-
-                for (const guildId of guildIds) {
-                    console.log(`Refreshing commands for Guild ID: ${guildId}`);
-                    await rest.put(
-                        Routes.applicationGuildCommands(env.discord.clientId, guildId),
-                        { body: slashCommandsToRegister },
-                    );
-                }
-            } else {
-                // Global commands
-                console.log(`Refreshing global commands...`);
-                await rest.put(
-                    Routes.applicationCommands(env.discord.clientId),
-                    { body: slashCommandsToRegister },
-                );
-            }
-            console.log('Successfully reloaded application (/) commands.');
-        } catch (error) {
-            console.error('Error registering slash commands:', error);
-        }
-    }
+    // Registering Slash Commands happens in a separate manual script: src/scripts/deploy-commands.ts
+    // to prevent hitting Discord's API rate limits directly during rapid Node bot restarts.
 };

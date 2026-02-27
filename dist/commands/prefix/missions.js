@@ -27,7 +27,7 @@ exports.default = {
         if (!message.guildId)
             return;
         const user = await User_1.User.findOne({ discordId: message.author.id });
-        if (!user || !user.optIn)
+        if (!user || !user.optedIn)
             return message.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot! `!link`')] });
         let missions = await Mission_1.Mission.find({ guildId: message.guildId, userId: message.author.id, completed: false });
         if (missions.length === 0) {

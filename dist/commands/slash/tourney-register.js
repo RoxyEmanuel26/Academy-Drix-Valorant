@@ -32,8 +32,8 @@ exports.default = {
         if (!interaction.guildId)
             return;
         const user = await User_1.User.findOne({ discordId: interaction.user.id });
-        if (!user || !user.optIn)
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu wajib connect akun menggunakan `/link` sebelum ikut turnamen!')], flags: discord_js_1.MessageFlags.Ephemeral });
+        if (!user || !user.optedIn)
+            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu wajib connect akun menggunakan `/link-account` sebelum ikut turnamen!')], flags: discord_js_1.MessageFlags.Ephemeral });
         const tourney = await Tournament_1.Tournament.findOne({ guildId: interaction.guildId, status: 'upcoming' });
         if (!tourney)
             return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Tidak ada turnamen yang open registration saat ini.')], flags: discord_js_1.MessageFlags.Ephemeral });

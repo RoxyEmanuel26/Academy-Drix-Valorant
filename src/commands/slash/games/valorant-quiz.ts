@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, TextChannel , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, TextChannel, MessageFlags } from 'discord.js';
 import { quizQuestions } from '../../../data/valorant';
 import { activeGames, setGameActive, setGameInactive } from '../../../utils/gameState';
 import { addPoints, POINT_CONFIG } from '../../../services/gamePointsService';
@@ -79,7 +79,8 @@ export default {
             .setDescription(`**${questionData.question}**\n\nPilih jawaban yang benar dalam 20 detik!\n\n${descriptionLines.join('\n')}`)
             .setFooter({ text: `Difficulty: ${difficulty.toUpperCase()} | Makin cepat = Makin besar poin!` });
 
-        const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+        await interaction.reply({ embeds: [embed], components: [row] });
+        const message = await interaction.fetchReply();
         const startTime = Date.now();
 
         const collector = message.createMessageComponentCollector({

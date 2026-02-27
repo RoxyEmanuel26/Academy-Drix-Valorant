@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, TextChannel, Message , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, TextChannel, Message, MessageFlags } from 'discord.js';
 import { agents, maps } from '../../../data/valorant';
 import { activeGames, setGameActive, setGameInactive, isAnswerCorrect } from '../../../utils/gameState';
 import { addPoints, POINT_CONFIG } from '../../../services/gamePointsService';
@@ -63,7 +63,8 @@ export default {
             .setDescription(`Susun kembali huruf acak berikut menjadi nama **${type.toUpperCase()}** VALORANT dalam 30 Detik.\n\nKetikan: **${scrambled}**`)
             .setFooter({ text: 'Hint otomatis muncul setelah 15 detik!' });
 
-        const messageRaw = await interaction.reply({ embeds: [embed], fetchReply: true });
+        await interaction.reply({ embeds: [embed] });
+        const messageRaw = await interaction.fetchReply();
         const startTime = Date.now();
 
         const filter = (m: Message) => !m.author.bot;

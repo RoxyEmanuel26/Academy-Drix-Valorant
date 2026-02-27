@@ -10,10 +10,11 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, MessageFlags } from 'discord.js';
 import { LfgPost } from '../../database/models/LfgPost';
 import { GuildConfig } from '../../database/models/GuildConfig';
 import { createLfgEmbed } from '../../utils/embed';
+import { detectRankFromRoles } from '../../utils/rankDetector';
 
 export default {
     data: new SlashCommandBuilder()
@@ -45,12 +46,39 @@ export default {
         const voiceChannelId = member.voice.channelId || undefined;
 
         const participants = [interaction.user.id];
-        const embed = createLfgEmbed(mode, note, participants, voiceChannelId)
+
+        // Extracted Note logic (this command doesn't provide buttons, pure note provided mostly)
+        let rankDisplay = '-';
+        let cleanNote = note;
+        const rankMatch = note.match(/^\[(.*?)\] (.*)/);
+        if (rankMatch) {
+            rankDisplay = rankMatch[1];
+            cleanNote = rankMatch[2];
+        }
+
+        // Build formatted participants list with dynamic roles
+        const formattedParticipants = [];
+        for (const pid of participants) {
+            try {
+                const pMember = await interaction.guild?.members.fetch(pid);
+                if (pMember) {
+                    const pRank = detectRankFromRoles(pMember.roles.cache);
+                    formattedParticipants.push(`<@${pid}> (${pRank.emoji} ${pRank.rank})`);
+                } else {
+                    formattedParticipants.push(`<@${pid}>`);
+                }
+            } catch {
+                formattedParticipants.push(`<@${pid}>`);
+            }
+        }
+
+        const embed = createLfgEmbed(mode, cleanNote, formattedParticipants, rankDisplay, (voiceChannelId || undefined))
             .setThumbnail(interaction.user.displayAvatarURL());
 
         const roleMention = config?.valorantRoleId ? `<@&${config.valorantRoleId}>` : '@here';
 
-        const reply = await interaction.reply({ content: roleMention, embeds: [embed], fetchReply: true });
+        await interaction.reply({ content: roleMention, embeds: [embed] });
+        const reply = await interaction.fetchReply();
 
         await LfgPost.create({
             guildId: interaction.guildId,

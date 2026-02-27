@@ -17,7 +17,7 @@
  */
 
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType , MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, MessageFlags } from 'discord.js';
 import { wyrQuestions } from '../../../data/valorant';
 
 export default {
@@ -44,7 +44,8 @@ export default {
             .setDescription(`**Mana yang lebih kamu pilih?**\n\n🔴 **A.** ${question.optionA}\n\n🔵 **B.** ${question.optionB}`)
             .setFooter({ text: 'Waktu voting 60 detik! (Tidak ada poin, pure for fun)' });
 
-        const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+        await interaction.reply({ embeds: [embed], components: [row] });
+        const message = await interaction.fetchReply();
 
         const collector = message.createMessageComponentCollector({
             componentType: ComponentType.Button,

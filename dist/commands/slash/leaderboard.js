@@ -20,8 +20,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const User_1 = require("../../database/models/User");
 const embed_1 = require("../../utils/embed");
-const featureFlags_1 = require("../../config/featureFlags");
-const env_1 = require("../../config/env");
+const featureGuard_1 = require("../../utils/featureGuard");
 exports.default = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('leaderboard')
@@ -31,13 +30,11 @@ exports.default = {
         .setRequired(true)
         .addChoices({ name: 'Rank', value: 'rank' }, { name: 'Winrate', value: 'winrate' }, { name: 'KDA', value: 'kda' })),
     async execute(interaction) {
-        if (!(0, featureFlags_1.isFeatureEnabled)('valorantLeaderboards')) {
-            return interaction.reply({ content: 'Fitur leaderboard VALORANT sedang dinonaktifkan oleh admin.', flags: discord_js_1.MessageFlags.Ephemeral });
+        const guard = (0, featureGuard_1.featureGuard)('LEADERBOARD_API');
+        if (!guard.allowed) {
+            return interaction.reply({ content: guard.reason, flags: discord_js_1.MessageFlags.Ephemeral });
         }
-        if (!env_1.env.riot.apiKey || !env_1.env.riot.rso.clientId || !env_1.env.riot.rso.clientSecret || !env_1.env.riot.rso.redirectUri) {
-            return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API/RSO belum dikonfigurasi sepenuhnya. Fitur belum dapat digunakan.')], flags: discord_js_1.MessageFlags.Ephemeral });
-        }
-        const users = await User_1.User.find({ optIn: true }).exec();
+        const users = await User_1.User.find({ optedIn: true }).exec();
         if (users.length === 0) {
             return interaction.reply({ embeds: [(0, embed_1.createErrorEmbed)('Belum ada player yang menghubungkan akun di server ini.')] });
         }
@@ -54,7 +51,8 @@ exports.default = {
             const rankStr = idx < 3 ? medals[idx] : `**${idx + 1}.**`;
             description += `${rankStr} ${u.riotGameName}#${u.riotTagLine} - ${u.statsCache?.winrate || Math.floor(Math.random() * 50) + 30}%\n`;
         });
-        const embed = (0, embed_1.createFunEmbed)(`🏆 Server Leaderboard: ${type.toUpperCase()}`, description || 'Wah, belum ada data yang cukup untuk di-rank!');
+        const embed = (0, embed_1.createFunEmbed)(`🏆 Server Leaderboard: ${type.toUpperCase()}`, (description || 'Wah, belum ada data yang cukup untuk di-rank!') +
+            `\n\n*📊 Leaderboard ini hanya menampilkan profil member dan rank resmi VALORANT. Ini tidak berafiliasi dengan sistem ranked resmi Riot Games.*`);
         await interaction.reply({ embeds: [embed] });
     },
 };

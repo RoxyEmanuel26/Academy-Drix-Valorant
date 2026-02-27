@@ -22,6 +22,7 @@ const connection_1 = require("./database/connection");
 const eventHandler_1 = require("./utils/eventHandler");
 const commandHandler_1 = require("./utils/commandHandler");
 const cronJobs_1 = require("./jobs/cronJobs");
+const tokenManager_1 = require("./utils/tokenManager");
 const env_1 = require("./config/env");
 const client = new discord_js_1.Client({
     intents: [
@@ -46,11 +47,24 @@ const init = async () => {
     // Load Handlers
     await (0, eventHandler_1.loadEvents)(client);
     await (0, commandHandler_1.loadCommands)(client);
+    // Boot Log Table for Riot API State
+    console.log('\n--- 🛡️ Riot API Compliance Boot State 🛡️ ---');
+    console.log(`API Key Type : ${env_1.env.riot.apiKeyType.toUpperCase()}`);
+    console.log(`RSO Enabled  : ${env_1.env.riot.rsoEnabled}`);
+    console.log(`FEATURES:`);
+    console.log(`- LINK        : ${env_1.env.riot.features.linkAccount}`);
+    console.log(`- PROFILE     : ${env_1.env.riot.features.profile}`);
+    console.log(`- RANK        : ${env_1.env.riot.features.rank}`);
+    console.log(`- MATCH HIST  : ${env_1.env.riot.features.matchHistory}`);
+    console.log(`- LEADERBOARD : ${env_1.env.riot.features.leaderboardApi}`);
+    console.log('-------------------------------------------\n');
     // Login
     if (env_1.env.discord.token) {
         await client.login(env_1.env.discord.token);
         // Start Fun & Games Cron Jobs
         (0, cronJobs_1.startCronJobs)(client);
+        // Start RSO Token Expiry Watchdog
+        (0, tokenManager_1.startTokenCleanupCron)();
     }
     else {
         console.warn('DISCORD_TOKEN is not provided. Bot will not connect to Discord.');

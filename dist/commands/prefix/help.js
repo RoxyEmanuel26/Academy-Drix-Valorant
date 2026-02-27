@@ -20,6 +20,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const embed_1 = require("../../utils/embed");
 const featureFlags_1 = require("../../config/featureFlags");
+const env_1 = require("../../config/env");
 exports.default = {
     name: 'help',
     description: 'Bantuan tentang semua fitur bot!',
@@ -41,7 +42,7 @@ exports.default = {
             { label: 'Info & Global', value: 'info', emoji: 'ℹ️' }
         ]));
         const response = await message.reply({ embeds: [embed], components: [row] });
-        const collector = response.createMessageComponentCollector({ componentType: discord_js_1.ComponentType.StringSelect, time: 60000 });
+        const collector = response.createMessageComponentCollector({ componentType: discord_js_1.ComponentType.StringSelect, time: 600000 });
         collector.on('collect', async (i) => {
             if (i.user.id !== message.author.id) {
                 await i.reply({ content: 'Ini menu help punya orang lain! Gunakan `!help` sendiri ya.', flags: discord_js_1.MessageFlags.Ephemeral });
@@ -52,50 +53,79 @@ exports.default = {
             switch (selection) {
                 // (Cases duplicated from slash command for brevity, normally you'd extract this mapping into a config)
                 case 'account':
-                    if (!featureFlags_1.featureFlags.valorantStats) {
+                    if (!env_1.env.riot.rsoEnabled) {
                         newEmbed.setTitle('🔗 Account & Linking (Segera Hadir 🚧)')
-                            .setDescription('Fitur ini akan diaktifkan setelah integrasi Riot/RSO dihidupkan oleh admin. Sementara itu, nikmati dulu games & feature lainnya ya! ✨');
+                            .setDescription('Fitur RSO/Riot Sign-On saat ini sedang dinonaktifkan oleh admin. Nikmati fitur lainnya sementara waktu! ✨');
                     }
                     else {
                         newEmbed.setTitle('🔗 Account & Linking')
-                            .setDescription('`/link` atau `!link` - Login RSO\n`/unlink` atau `!unlink` - Hapus akun\n`/me` atau `!me` - Lihat profil\n`/privacy` atau `!privacy` - Kebijakan privasi');
+                            .setDescription('`/link-account` atau `!link-account` (Aliases: `!link`) - Tautkan akun Riot (RSO)\n' +
+                            '`/unlink-account` atau `!unlink-account` (Aliases: `!unlink`) - Cabut tautan akun Riot\n\n' +
+                            '*Catatan Privasi: Semua data VALORANT membutuhkan persetujuan/klaim RSO Anda. Anda dapat mencabut data kapan saja.*');
                     }
                     break;
                 case 'stats':
-                    if (!featureFlags_1.featureFlags.valorantStats) {
+                    if (!env_1.env.riot.features.stats) {
                         newEmbed.setTitle('📊 Personal Stats (Segera Hadir 🚧)')
                             .setDescription('Fitur ini akan diaktifkan setelah integrasi Riot/RSO dihidupkan oleh admin.');
                     }
                     else {
                         newEmbed.setTitle('📊 Personal Stats')
-                            .setDescription('`/mystats` atau `!mystats` - Profil & Winrate kamu\n`/lastmatch` atau `!lastmatch` - Info Match Terakhir\n`/stats` atau `!stats @user` - Stats teman');
+                            .setDescription('`/mystats` atau `!mystats` (Aliases: `!ms`) - Profil & Winrate VALORANT resmi\n' +
+                            '`/lastmatch` atau `!lastmatch` (Aliases: `!lm`) - Info Match Terakhir (Player Lain Anonymous jika tidak Link)\n' +
+                            '`/stats` atau `!stats @user` - Stats teman');
                     }
                     break;
                 case 'leaderboard':
-                    if (!featureFlags_1.featureFlags.valorantLeaderboards) {
-                        newEmbed.setTitle('🏆 Leaderboards (Segera Hadir 🚧)')
+                    if (!env_1.env.riot.features.leaderboardApi) {
+                        newEmbed.setTitle('🏆 Leaderboards Riot (Segera Hadir 🚧)')
                             .setDescription('Fitur ini akan diaktifkan setelah integrasi Riot/RSO dihidupkan oleh admin.');
                     }
                     else {
                         newEmbed.setTitle('🏆 Leaderboards')
-                            .setDescription('`/leaderboard` atau `!leaderboard <type>` - Lihat ranking server');
+                            .setDescription('`/leaderboard` atau `!leaderboard <type>` (Aliases: `!lbval`) - Lihat ranking resmi server (Wajib Opt-in)');
                     }
                     break;
                 case 'profile':
                     newEmbed.setTitle('👤 Profil & Personalisasi')
-                        .setDescription('`/profile-card` atau `!profile` - Tampilkan statistik text profil Valorant\n`/card` atau `!card` - Tampilkan Graphic ID Card (KTP) kamu\n`/set-main-agent` atau `!set-agent` - Set 3 agent andalan\n`/set-bio` atau `!set-bio` - Tulis bio pendek di profil\n`/rank-role-claim` atau `!rank-claim` - Klaim role discord sesuai rank\n`/server-roster` atau `!roster` - Lihat kolektif anggota server & poin');
+                        .setDescription('`/profile-card` atau `!profile` (Aliases: `!profile-card`, `!p`) - Tampilkan statistik text profil Valorant\n' +
+                        '`/card` atau `!card` (Aliases: `!c`) - Tampilkan Graphic ID Card (KTP) kamu\n' +
+                        '`/set-main-agent` atau `!set-agent` (Aliases: `!setagent`) - Set 3 agent andalan\n' +
+                        '`/set-bio` atau `!set-bio` (Aliases: `!setbio`) - Tulis bio pendek di profil\n' +
+                        '`/rank-role-claim` atau `!rank-claim` (Aliases: `!claim-rank`) - Klaim role discord sesuai rank\n' +
+                        '`/server-roster` atau `!roster` (Aliases: `!list-member`) - Lihat kolektif anggota server & poin');
                     break;
                 case 'fun':
                     newEmbed.setTitle('🎲 Fun & Games')
-                        .setDescription('**🔥 Mini-Games Berhadiah Poin:**\n`/guess-map` atau `!guess-map` - Tebak Map Valorant\n`/valorant-quiz` atau `!quiz` - Kuis pilihan ganda VALORANT\n`/emoji-agent` atau `!emoji-agent` - Tebak Agent dari 3 Emoji\n`/scramble` atau `!scramble` - Susun huruf acak nama Map/Agent\n`/daily-challenge` atau `!daily` - Tantangan harian (Multiplier & Streak Bonus)\n\n**✨ Casual Games (No Points):**\n`/would-you-rather` atau `!wyr` - Polling skenario ekstrim\n`/this-or-that` atau `!tot` - Polling cepat 30 detik\n`/agent-personality` atau `!personality` - Tes kecocokan agent\n\n**🏆 Ekonomi Poin:**\n`/my-points` atau `!my-points` - Cek stats & rank kamu\n`/leaderboard-games` atau `!lb` - Klasemen Top 10 Server\n`/admin-points` atau `!admin-points` - (Admin Only) Modifikasi Poin');
+                        .setDescription('**🔥 Mini-Games Berhadiah Poin:**\n' +
+                        '`/guess-map` atau `!guess-map` (Aliases: `!map`, `!tebakmap`) - Tebak Map Valorant\n' +
+                        '`/valorant-quiz` atau `!quiz` (Aliases: `!kuis`) - Kuis pilihan ganda VALORANT\n' +
+                        '`/emoji-agent` atau `!emoji-agent` (Aliases: `!emojia`, `!tebakemoji`) - Tebak Agent dari 3 Emoji\n' +
+                        '`/scramble` atau `!scramble` (Aliases: `!acak`, `!susunkata`) - Susun huruf acak nama Map/Agent\n' +
+                        '`/daily-challenge` atau `!daily` (Aliases: `!tantanganharian`) - Tantangan harian (Multiplier & Streak Bonus)\n\n' +
+                        '**✨ Casual Games (No Points):**\n' +
+                        '`/would-you-rather` atau `!wyr` (Aliases: `!pilihmana`) - Polling skenario ekstrim\n' +
+                        '`/this-or-that` atau `!tot` (Aliases: `!mending`) - Polling cepat 30 detik\n' +
+                        '`/agent-personality` atau `!personality` (Aliases: `!teskepribadian`) - Tes kecocokan agent\n\n' +
+                        '**🏆 Ekonomi Poin:**\n' +
+                        '`/my-points` atau `!my-points` (Aliases: `!mypoints`, `!poinku`, `!stats`) - Cek stats & rank kamu\n' +
+                        '`/leaderboard-games` atau `!lb` (Aliases: `!topgames`, `!ranking`) - Klasemen Top 10 Server\n' +
+                        '`/admin-points` atau `!admin-points` (Aliases: `!givepoints`, `!addpoints`, `!removepoints`) - (Admin Only) Modifikasi Poin');
                     break;
                 case 'missions':
                     newEmbed.setTitle('🎯 Missions')
                         .setDescription('`/missions` atau `!missions` - Lihat misi aktif harian/mingguan');
                     break;
-                case 'lfg':
+                case 'lfp':
                     newEmbed.setTitle('🎮 Looking For Party (LFG/LFP)')
-                        .setDescription('`/lfg` atau `/lfp` (Prefix: `!lfg`, `!lfp`) - Cari teman mabar\n`/lfg-close` atau `/lfp-close` (Prefix: `!lfg-close`, `!lfp-close`) - Tutup post aktif');
+                        .setDescription('Gunakan fitur LFG/LFP (Aliases: `!lfg`, `!party`, `!carimabar`, `!mabar`, `!valoyuk`) untuk mencari teman mabar VALORANT dengan cepat!\n\n' +
+                        '**📌 Command Buat Party:**\n' +
+                        '`/lfg` atau `!lfp [catatan]` (contoh: `!lfg Butuh controller rank Gold`)\n' +
+                        'Pilih mode (Unrated/Competitive), dan bot akan mengirimkan ping mabar otomatis. Orang lain bisa bergabung dengan mengklik tombol Join di pesan tersebut.\n\n' +
+                        '**🎙️ Voice Channel Auto-Detect:**\n' +
+                        'Jika kamu sedang berada di Voice Channel Discord saat menggunakan command ini, bot akan otomatis mencantumkannya di undangan LFG.\n\n' +
+                        '**🛑 Menutup Party:**\n' +
+                        '`/lfg-close` atau `!lfg-close` (Aliases: `!party-close`) - Tutup post LFG-mu jika anggota sudah penuh atau batal bermain.');
                     break;
                 case 'tournaments':
                     newEmbed.setTitle('🚩 Tournaments')
@@ -108,7 +138,7 @@ exports.default = {
                     }
                     else {
                         newEmbed.setTitle('ℹ️ Info & Global Stats')
-                            .setDescription('`/status` atau `!status` - Status Server AP Riot\n`/agents` atau `!agents` - Info role');
+                            .setDescription('`/status` atau `!status` - Status Server AP Riot\n`/agents` atau `!agents` - Info role\n\n**🛠️ Admin Tools:**\n`!deploy` atau `!registerbot` (Aliases: `!sync`) - Registrasi/Update manual untuk Slash Commands secara instan pada server (Hanya Admin).');
                     }
                     break;
             }

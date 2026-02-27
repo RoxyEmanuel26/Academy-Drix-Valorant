@@ -19,22 +19,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = require("../../database/models/User");
 const embed_1 = require("../../utils/embed");
-const featureFlags_1 = require("../../config/featureFlags");
-const env_1 = require("../../config/env");
+const featureGuard_1 = require("../../utils/featureGuard");
+const tokenManager_1 = require("../../utils/tokenManager");
 exports.default = {
     name: 'mystats',
     description: 'Lihat statisik santai VALORANT kamu!',
     async execute(message, args) {
-        if (!(0, featureFlags_1.isFeatureEnabled)('valorantStats')) {
-            return message.reply('Fitur statistik VALORANT sedang dinonaktifkan oleh admin. Nanti nyala lagi kok! ✨');
+        const guard = (0, featureGuard_1.featureGuard)('STATS');
+        if (!guard.allowed) {
+            return message.reply(guard.reason || 'Fitur dinonaktifkan.');
         }
-        if (!env_1.env.riot.apiKey || !env_1.env.riot.rso.clientId || !env_1.env.riot.rso.clientSecret || !env_1.env.riot.rso.redirectUri) {
-            return message.reply({ embeds: [(0, embed_1.createErrorEmbed)('Riot API/RSO belum dikonfigurasi. Fitur belum dapat digunakan.')] });
+        const accessToken = await (0, tokenManager_1.getValidAccessToken)(message.author.id);
+        if (!accessToken) {
+            return message.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `!link-account` untuk menghubungkan akun Riot kamu terlebih dahulu sebelum menggunakan fitur ini.')] });
         }
         const user = await User_1.User.findOne({ discordId: message.author.id });
-        if (!user || !user.optIn || !user.riotPuuid) {
-            return message.reply({ embeds: [(0, embed_1.createErrorEmbed)('Kamu belum menghubungkan akun Riot apa pun!\nGunakan `!link` untuk memulai.')] });
-        }
+        if (!user)
+            return;
         try {
             const stats = user.statsCache || { rank: 'Unranked', winrate: 50, totalWins: 10, totalLosses: 10 };
             const embed = (0, embed_1.createFunEmbed)(`📊 Stats: ${user.riotGameName}#${user.riotTagLine}`, `**Rank:** ${stats.rank}\n**Winrate:** ${stats.winrate}%\n**Matches:** ${stats.totalWins} W / ${stats.totalLosses} L\n\n*Statistik dihitung dari data terakhir yang tersinkronisasi di server ini!*`).setThumbnail(message.author.displayAvatarURL());
